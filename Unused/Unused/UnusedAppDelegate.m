@@ -3,57 +3,58 @@
 //  Unused
 //
 //  Created by Jeff Hodnett on 19/11/2011.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Copyright 2011 Seamonster Ltd. All rights reserved.
 //
 
 #import "UnusedAppDelegate.h"
 
 @implementation UnusedAppDelegate
 
-@synthesize resultsTableView;
-@synthesize processIndicator;
-@synthesize statusLabel;
-@synthesize window;
-@synthesize mCheckbox;
-@synthesize xibCheckbox;
-@synthesize cppCheckbox;
-@synthesize mmCheckbox;
-@synthesize searchDirectoryPath;
-@synthesize browseButton;
-@synthesize pathTextField;
-@synthesize searchButton;
-@synthesize exportButton;
+@synthesize resultsTableView=_resultsTableView;
+@synthesize processIndicator=_processIndicator;
+@synthesize statusLabel=_statusLabel;
+@synthesize window=_window;
+@synthesize mCheckbox=_mCheckbox;
+@synthesize xibCheckbox=_xibCheckbox;
+@synthesize cppCheckbox=_cppCheckbox;
+@synthesize mmCheckbox=_mmCheckbox;
+@synthesize browseButton=_browseButton;
+@synthesize pathTextField=_pathTextField;
+@synthesize searchButton=_searchButton;
+@synthesize exportButton=_exportButton;
+@synthesize searchDirectoryPath=_searchDirectoryPath;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
     
     // Setup the results array
-    results = [[NSMutableArray alloc] init];
+    _results = [[NSMutableArray alloc] init];
     
     // Setup the retina images array
-    retinaImagePaths = [[NSMutableArray alloc] init];
+    _retinaImagePaths = [[NSMutableArray alloc] init];
     
     // Setup the queue
-    queue = [[NSOperationQueue alloc] init];
+    _queue = [[NSOperationQueue alloc] init];
     
     // Setup double click
-    [resultsTableView setDoubleAction:@selector(tableViewDoubleClicked)];
+    [_resultsTableView setDoubleAction:@selector(tableViewDoubleClicked)];
     
     // Setup labels
-    [statusLabel setTextColor:[NSColor lightGrayColor]];
+    [_statusLabel setTextColor:[NSColor lightGrayColor]];
 
     // Setup search button
-    [searchButton setBezelStyle:NSRoundedBezelStyle];
-    [searchButton setKeyEquivalent:@"\r"];
+    [_searchButton setBezelStyle:NSRoundedBezelStyle];
+    [_searchButton setKeyEquivalent:@"\r"];
 }
 
 -(void)dealloc
 {
-    [searchDirectoryPath release];
-    [results release];
-    [retinaImagePaths release];
-    [queue release];    
+    [_searchDirectoryPath release];
+    
+    [_results release];
+    [_retinaImagePaths release];
+    [_queue release];    
 
     [super dealloc];
 }
@@ -61,14 +62,15 @@
 #pragma mark - Actions
 -(IBAction)browseButtonSelected:(id)sender
 {
+    // Show an open panel
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     
     [openPanel setCanChooseDirectories:YES];
     [openPanel setCanChooseFiles:NO];
 
     NSInteger option = [openPanel runModal];
-    
     if (option == NSOKButton) {
+        // Store the path
         self.searchDirectoryPath = [openPanel directory];
         
         // Update the path text field
@@ -88,7 +90,7 @@
         NSMutableString *outputResults = [[NSMutableString alloc] init];
         [outputResults appendFormat:@"Unused Files in project %@\n\n",self.searchDirectoryPath];
         
-        for (NSString *path in results) {
+        for (NSString *path in _results) {
             [outputResults appendFormat:@"%@\n",path];
         }
         
@@ -125,17 +127,17 @@
     // Change the button text
 //    [searchButton setTitle:@"Cancel"];
 //    [searchButton setKeyEquivalent:@""];
-    [searchButton setEnabled:NO];
-    [searchButton setKeyEquivalent:@""];
+    [_searchButton setEnabled:NO];
+    [_searchButton setKeyEquivalent:@""];
     
     // Reset
-    [results removeAllObjects];
-    [retinaImagePaths removeAllObjects];
-    [resultsTableView reloadData];
+    [_results removeAllObjects];
+    [_retinaImagePaths removeAllObjects];
+    [_resultsTableView reloadData];
     
     // Start the search
     NSInvocationOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(runImageSearch) object:nil];
-    [queue addOperation:op];
+    [_queue addOperation:op];
     [op release];
     
     isSearching = YES;
@@ -147,7 +149,7 @@
     [self setUIEnabled:NO];
     
     // Find all the .png files in the folder
-    NSArray *pngFiles = [self pngFilesAtDirectory:searchDirectoryPath];
+    NSArray *pngFiles = [self pngFilesAtDirectory:_searchDirectoryPath];
 
     // Setup all the @2x image firstly
     for (NSString *pngPath in pngFiles) {
@@ -157,7 +159,7 @@
         NSRange retinaRange = [imageName rangeOfString:@"@2x"];
         if(retinaRange.location != NSNotFound) {
             // Add to retina image paths
-            [retinaImagePaths addObject:pngPath];
+            [_retinaImagePaths addObject:pngPath];
         }
     }
     
@@ -175,29 +177,29 @@
                 // Run the checks
                 int count = 0;
                 BOOL found = NO;
-                if([mCheckbox state]) {
-                    count += [self occurancesOfImageNamed:imageName atDirectory:searchDirectoryPath inFileExtensionType:@"m"];
+                if([_mCheckbox state]) {
+                    count += [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"m"];
                 }
                 if(count > 0) {
                     found = YES;
                 }
                 
-                if(!found && [xibCheckbox state]) {
-                    count += [self occurancesOfImageNamed:imageName atDirectory:searchDirectoryPath inFileExtensionType:@"xib"];
+                if(!found && [_xibCheckbox state]) {
+                    count += [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"xib"];
                 }
                 if(count > 0) {
                     found = YES;
                 }
 
-                if(!found && [cppCheckbox state]) {
-                    count += [self occurancesOfImageNamed:imageName atDirectory:searchDirectoryPath inFileExtensionType:@"cpp"];
+                if(!found && [_cppCheckbox state]) {
+                    count += [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"cpp"];
                 }
                 if(count > 0) {
                     found = YES;
                 }
                 
-                if(!found && [mmCheckbox state]) {
-                    count += [self occurancesOfImageNamed:imageName atDirectory:searchDirectoryPath inFileExtensionType:@"mm"];
+                if(!found && [_mmCheckbox state]) {
+                    count += [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"mm"];
                 }
                 if(count > 0) {
                     found = YES;
@@ -215,11 +217,11 @@
     
     // Calculate how much file size we saved and update the label
     int fileSize = 0;
-    for (NSString *path in results) {
+    for (NSString *path in _results) {
         fileSize += [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil] fileSize];
     }
         
-    [statusLabel setStringValue:[NSString stringWithFormat:@"Completed - Found %d - Size %@", [results count], [self stringFromFileSize:fileSize]]];
+    [_statusLabel setStringValue:[NSString stringWithFormat:@"Completed - Found %d - Size %@", [_results count], [self stringFromFileSize:fileSize]]];
     
     // Enable the ui
     [self setUIEnabled:YES];
@@ -230,30 +232,30 @@
 -(void)setUIEnabled:(BOOL)state
 {
     if(state) {
-        [searchButton setTitle:@"Search"];
-        [searchButton setKeyEquivalent:@"\r"];
-        [searchButton setEnabled:YES];
-        [processIndicator setHidden:YES];
-        [processIndicator stopAnimation:self];
-        [mCheckbox setEnabled:YES];
-        [xibCheckbox setEnabled:YES];
-        [cppCheckbox setEnabled:YES];
-        [mmCheckbox setEnabled:YES];
-        [browseButton setEnabled:YES];
-        [pathTextField setEnabled:YES];
-        [exportButton setHidden:NO];   
+        [_searchButton setTitle:@"Search"];
+        [_searchButton setKeyEquivalent:@"\r"];
+        [_searchButton setEnabled:YES];
+        [_processIndicator setHidden:YES];
+        [_processIndicator stopAnimation:self];
+        [_mCheckbox setEnabled:YES];
+        [_xibCheckbox setEnabled:YES];
+        [_cppCheckbox setEnabled:YES];
+        [_mmCheckbox setEnabled:YES];
+        [_browseButton setEnabled:YES];
+        [_pathTextField setEnabled:YES];
+        [_exportButton setHidden:NO];   
     }
     else {
-        [processIndicator setHidden:NO];
-        [processIndicator startAnimation:self];
-        [statusLabel setStringValue:@"Searching..."];
-        [mCheckbox setEnabled:NO];
-        [xibCheckbox setEnabled:NO];
-        [cppCheckbox setEnabled:NO];
-        [mmCheckbox setEnabled:NO];
-        [browseButton setEnabled:NO];
-        [pathTextField setEnabled:NO];
-        [exportButton setHidden:YES];
+        [_processIndicator setHidden:NO];
+        [_processIndicator startAnimation:self];
+        [_statusLabel setStringValue:@"Searching..."];
+        [_mCheckbox setEnabled:NO];
+        [_xibCheckbox setEnabled:NO];
+        [_cppCheckbox setEnabled:NO];
+        [_mmCheckbox setEnabled:NO];
+        [_browseButton setEnabled:NO];
+        [_pathTextField setEnabled:NO];
+        [_exportButton setHidden:YES];
     }
 }
 
@@ -358,10 +360,10 @@
 -(void)addNewResult:(NSString *)pngPath
 {
     // Add and reload
-    [results addObject:pngPath];
+    [_results addObject:pngPath];
     
     // Check for an @2x image too!
-    for (NSString *retinaPath in retinaImagePaths) {
+    for (NSString *retinaPath in _retinaImagePaths) {
         
         // Compare the image name and the retina image name
         NSString *imageName = [pngPath lastPathComponent];
@@ -373,30 +375,30 @@
         // Check
         if([imageName isEqualToString:retinaImageName]) {
             // Add it
-            [results addObject:retinaPath];
+            [_results addObject:retinaPath];
             
             break;
         }
     }
     
     // Reload
-    [resultsTableView reloadData];
+    [_resultsTableView reloadData];
         
     // Scroll to the bottom
-    NSInteger numberOfRows = [resultsTableView numberOfRows];
+    NSInteger numberOfRows = [_resultsTableView numberOfRows];
     if (numberOfRows > 0)
-        [resultsTableView scrollRowToVisible:numberOfRows - 1];
+        [_resultsTableView scrollRowToVisible:numberOfRows - 1];
 }
 
 #pragma mark - NSTableView Delegate
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return [results count];
+    return [_results count];
 }
 
 -(id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)rowIndex
 {
-    NSString *pngPath = [results objectAtIndex:rowIndex];
+    NSString *pngPath = [_results objectAtIndex:rowIndex];
     
     if ([[tableColumn identifier] isEqualToString:@"shortName"])
     {
@@ -410,7 +412,7 @@
 -(void)tableViewDoubleClicked
 {
     // Open finder
-    NSString *path = [results objectAtIndex:[resultsTableView clickedRow]];
+    NSString *path = [_results objectAtIndex:[_resultsTableView clickedRow]];
     [[NSWorkspace sharedWorkspace] selectFile:path inFileViewerRootedAtPath:nil];
 
 //    [[NSWorkspace sharedWorkspace] openFile:@"/Myfiles/README" withApplication:@"Edit"]; 
@@ -422,8 +424,6 @@
 //    NSDictionary* errorDict = nil; 
 //    [script executeAndReturnError: &errorDict]; 
 //    [script release]; 
-    
-    
 }
 
 - (NSString *)stringFromFileSize:(int)theSize
