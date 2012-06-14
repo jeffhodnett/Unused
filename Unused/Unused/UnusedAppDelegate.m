@@ -18,6 +18,7 @@
 @synthesize xibCheckbox=_xibCheckbox;
 @synthesize cppCheckbox=_cppCheckbox;
 @synthesize mmCheckbox=_mmCheckbox;
+@synthesize htmlCheckbox =_htmlCheckbox;
 @synthesize browseButton=_browseButton;
 @synthesize pathTextField=_pathTextField;
 @synthesize searchButton=_searchButton;
@@ -71,7 +72,7 @@
     NSInteger option = [openPanel runModal];
     if (option == NSOKButton) {
         // Store the path
-        self.searchDirectoryPath = [openPanel directory];
+        self.searchDirectoryPath = [[openPanel directoryURL] path];
         
         // Update the path text field
         [self.pathTextField setStringValue:self.searchDirectoryPath];
@@ -85,7 +86,7 @@
     NSInteger result = [save runModal];
     
     if (result == NSOKButton) {
-        NSString *selectedFile = [save filename];
+        NSString *selectedFile = [[save URL] path];
         
         NSMutableString *outputResults = [[NSMutableString alloc] init];
         [outputResults appendFormat:@"Unused Files in project %@\n\n",self.searchDirectoryPath];
@@ -175,41 +176,29 @@
             if([self isValidImageAtPath:pngPath]) {
                 
                 // Run the checks
-                int count = 0;
-                BOOL found = NO;
-                if([_mCheckbox state]) {
-                    count += [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"m"];
-                }
-                if(count > 0) {
-                    found = YES;
+                if([_mCheckbox state] && [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"m"]) {
+                    continue;
                 }
                 
-                if(!found && [_xibCheckbox state]) {
-                    count += [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"xib"];
-                }
-                if(count > 0) {
-                    found = YES;
+                if([_xibCheckbox state] && [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"xib"]) {
+                    continue;
                 }
 
-                if(!found && [_cppCheckbox state]) {
-                    count += [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"cpp"];
-                }
-                if(count > 0) {
-                    found = YES;
+                if([_cppCheckbox state] && [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"cpp"]) {
+                    continue;
                 }
                 
-                if(!found && [_mmCheckbox state]) {
-                    count += [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"mm"];
+                if([_mmCheckbox state] && [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"mm"]) {
+                    continue;
                 }
-                if(count > 0) {
-                    found = YES;
+                
+                if([_htmlCheckbox state] && [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"html"]) {
+                    continue;
                 }
                 
                 // Is it not found
-                if(count == 0) {                    
-                    // Update results
-                    [self addNewResult:pngPath];
-                }
+                // Update results
+                [self addNewResult:pngPath];
             }
             
         }
@@ -241,6 +230,7 @@
         [_xibCheckbox setEnabled:YES];
         [_cppCheckbox setEnabled:YES];
         [_mmCheckbox setEnabled:YES];
+        [_htmlCheckbox setEnabled:YES];
         [_browseButton setEnabled:YES];
         [_pathTextField setEnabled:YES];
         [_exportButton setHidden:NO];   
@@ -253,6 +243,7 @@
         [_xibCheckbox setEnabled:NO];
         [_cppCheckbox setEnabled:NO];
         [_mmCheckbox setEnabled:NO];
+        [_htmlCheckbox setEnabled:NO];
         [_browseButton setEnabled:NO];
         [_pathTextField setEnabled:NO];
         [_exportButton setHidden:YES];

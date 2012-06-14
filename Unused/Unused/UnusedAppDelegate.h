@@ -28,6 +28,7 @@
 @property (assign) IBOutlet NSButton *mCheckbox;
 @property (assign) IBOutlet NSButton *xibCheckbox;
 @property (assign) IBOutlet NSButton *cppCheckbox;
+@property (assign) IBOutlet NSButton *htmlCheckbox;
 @property (assign) IBOutlet NSButton *mmCheckbox;
 @property(assign) IBOutlet NSButton *browseButton;
 @property(assign) IBOutlet NSTextField *pathTextField;
