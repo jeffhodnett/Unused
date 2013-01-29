@@ -8,6 +8,8 @@
 
 #import "UnusedAppDelegate.h"
 
+#define SHOULD_FILTER_ENUM_VARIANTS YES
+
 @implementation UnusedAppDelegate
 
 @synthesize resultsTableView=_resultsTableView;
@@ -152,6 +154,24 @@
 
     // Find all the .png files in the folder
     NSArray *pngFiles = [self pngFilesAtDirectory:_searchDirectoryPath];
+
+    if (SHOULD_FILTER_ENUM_VARIANTS)
+    {
+        NSMutableArray *mutablePngFiles = [NSMutableArray arrayWithArray:pngFiles];
+
+        // Trying to filter image names like: "Section_0.png", "Section_1.png", etc (these names can possibly be created by [NSString stringWithFormat:@"Section_%d", (int)] constructions) to just "Section_" item
+        for (NSInteger index = 0, count = [mutablePngFiles count]; index < count; index++)
+        {
+            NSString *imageName = [mutablePngFiles objectAtIndex:index];
+            NSRegularExpression *regExp = [NSRegularExpression regularExpressionWithPattern:@"[_-]\\d(@2x)?.png" options:NSRegularExpressionCaseInsensitive error:nil];
+            NSString *newImageName = [regExp stringByReplacingMatchesInString:imageName options:NSMatchingReportProgress range:NSMakeRange(0, [imageName length]) withTemplate:@""];
+            if (newImageName != nil)
+                [mutablePngFiles replaceObjectAtIndex:index withObject:newImageName];
+        }
+
+        // Remove duplicates and update pngFiles array
+        pngFiles = [[NSSet setWithArray:mutablePngFiles] allObjects];
+    }
 
     // Setup all the @2x image firstly
     for (NSString *pngPath in pngFiles) {
@@ -338,7 +358,7 @@
     NSString *string;
     string = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
 
-//    NSLog (@"script returned:\n%@", string);
+//    NSLog(@"script returned:\n%@", imageName, string);
 
     // See if we can create a lines array
 //    NSArray *lines = [string componentsSeparatedByString:@"\n"];
