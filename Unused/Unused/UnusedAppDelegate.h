@@ -10,11 +10,11 @@
 
 @interface UnusedAppDelegate : NSObject <NSApplicationDelegate, NSTableViewDataSource, NSTableViewDelegate> {
 @private
-        
+
     // Arrays
     NSMutableArray *_results;
     NSMutableArray *_retinaImagePaths;
-    
+
     NSOperationQueue *_queue;
     BOOL isSearching;
 }
