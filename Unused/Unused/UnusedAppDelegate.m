@@ -30,8 +30,6 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    // Insert code here to initialize your application
-
     // Setup the results array
     _results = [[NSMutableArray alloc] init];
 
@@ -129,8 +127,6 @@
     }
 
     // Change the button text
-//    [searchButton setTitle:@"Cancel"];
-//    [searchButton setKeyEquivalent:@""];
     [_searchButton setEnabled:NO];
     [_searchButton setKeyEquivalent:@""];
 
@@ -358,12 +354,6 @@
     NSString *string;
     string = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
 
-//    NSLog(@"script returned:\n%@", imageName, string);
-
-    // See if we can create a lines array
-//    NSArray *lines = [string componentsSeparatedByString:@"\n"];
-//    NSLog(@"lines= %@",lines);
-
     // Calculate the count
     NSScanner *scanner = [NSScanner scannerWithString: string];
     NSCharacterSet *newline = [NSCharacterSet newlineCharacterSet];
@@ -371,7 +361,6 @@
     while ([scanner scanUpToCharactersFromSet: newline  intoString: nil]) {
         count++;
     }
-//    NSLog(@"count = %d",count);
 
     return count;
 }
@@ -433,16 +422,6 @@
     // Open finder
     NSString *path = [_results objectAtIndex:[_resultsTableView clickedRow]];
     [[NSWorkspace sharedWorkspace] selectFile:path inFileViewerRootedAtPath:nil];
-
-//    [[NSWorkspace sharedWorkspace] openFile:@"/Myfiles/README" withApplication:@"Edit"];
-//    [[NSWorkspace sharedWorkspace] openFile:path];
-//    [[NSWorkspace sharedWorkspace] openFile:path withApplication:@"Xcode"];
-
-//    NSString* scriptString = [NSString stringWithFormat: @"tell application \"Finder\" to open posix file \"%@\"", path];
-//    NSAppleScript* script = [[NSAppleScript alloc] initWithSource: scriptString];
-//    NSDictionary* errorDict = nil;
-//    [script executeAndReturnError: &errorDict];
-//    [script release];
 }
 
 - (NSString *)stringFromFileSize:(int)theSize
