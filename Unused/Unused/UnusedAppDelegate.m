@@ -315,10 +315,11 @@
 {
     NSTask *task;
     task = [[[NSTask alloc] init] autorelease];
-    [task setLaunchPath: @"/usr/bin/find"];
+    [task setLaunchPath: @"/bin/sh"];
 
     // Setup the call
-    NSArray *argvals = [NSArray arrayWithObjects:directoryPath,@"-name",[NSString stringWithFormat:@"*.%@",extension],@"-exec",@"grep",@"-li",imageName, @"{}", @";",nil];
+    NSString *cmd = [NSString stringWithFormat:@"while read file; do cat $file | grep -o %@ ; done <<< $(find %@ -name *.%@)", [imageName stringByDeletingPathExtension], directoryPath, extension];
+    NSArray *argvals = [NSArray arrayWithObjects: @"-c", cmd, nil];
     [task setArguments: argvals];
 
     NSPipe *pipe;
@@ -345,9 +346,9 @@
 
     // Calculate the count
     NSScanner *scanner = [NSScanner scannerWithString: string];
-    NSCharacterSet *whiteSpace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+    NSCharacterSet *newline = [NSCharacterSet newlineCharacterSet];
     int count = 0;
-    while ([scanner scanUpToCharactersFromSet: whiteSpace  intoString: nil]) {
+    while ([scanner scanUpToCharactersFromSet: newline  intoString: nil]) {
         count++;
     }
 //    NSLog(@"count = %d",count);
