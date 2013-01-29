@@ -236,6 +236,7 @@
         [_cppCheckbox setEnabled:YES];
         [_mmCheckbox setEnabled:YES];
         [_htmlCheckbox setEnabled:YES];
+        [_plistCheckbox setEnabled:YES];
         [_browseButton setEnabled:YES];
         [_pathTextField setEnabled:YES];
         [_exportButton setHidden:NO];
@@ -249,6 +250,7 @@
         [_cppCheckbox setEnabled:NO];
         [_mmCheckbox setEnabled:NO];
         [_htmlCheckbox setEnabled:NO];
+        [_plistCheckbox setEnabled:NO];
         [_browseButton setEnabled:NO];
         [_pathTextField setEnabled:NO];
         [_exportButton setHidden:YES];
