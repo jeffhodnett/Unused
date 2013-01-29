@@ -215,7 +215,7 @@
         fileSize += [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil] fileSize];
     }
 
-    [_statusLabel setStringValue:[NSString stringWithFormat:@"Completed - Found %d - Size %@", [_results count], [self stringFromFileSize:fileSize]]];
+    [_statusLabel setStringValue:[NSString stringWithFormat:@"Completed - Found %ld - Size %@", (unsigned long)[_results count], [self stringFromFileSize:fileSize]]];
 
     // Enable the ui
     [self setUIEnabled:YES];
