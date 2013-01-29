@@ -334,7 +334,7 @@
     [task setLaunchPath: @"/bin/sh"];
 
     // Setup the call
-    NSString *cmd = [NSString stringWithFormat:@"while read file; do cat $file | grep -o %@ ; done <<< $(find %@ -name *.%@)", [imageName stringByDeletingPathExtension], directoryPath, extension];
+    NSString *cmd = [NSString stringWithFormat:@"export IFS=""; while read file; do cat $file | grep -o %@ ; done <<< $(find %@ -name *.%@)", [imageName stringByDeletingPathExtension], directoryPath, extension];
     NSArray *argvals = [NSArray arrayWithObjects: @"-c", cmd, nil];
     [task setArguments: argvals];
 
