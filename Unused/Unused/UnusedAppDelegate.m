@@ -19,6 +19,7 @@
 @synthesize cppCheckbox=_cppCheckbox;
 @synthesize mmCheckbox=_mmCheckbox;
 @synthesize htmlCheckbox =_htmlCheckbox;
+@synthesize plistCheckbox =_plistCheckbox;
 @synthesize browseButton=_browseButton;
 @synthesize pathTextField=_pathTextField;
 @synthesize searchButton=_searchButton;
@@ -195,6 +196,10 @@
                 if([_htmlCheckbox state] && [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"html"]) {
                     continue;
                 }
+                
+                if([_plistCheckbox state] && [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"plist"]) {
+                    continue;
+                }                
                 
                 // Is it not found
                 // Update results
