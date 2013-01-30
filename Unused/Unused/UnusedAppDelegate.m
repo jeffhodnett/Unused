@@ -159,7 +159,7 @@
         for (NSInteger index = 0, count = [mutablePngFiles count]; index < count; index++)
         {
             NSString *imageName = [mutablePngFiles objectAtIndex:index];
-            NSRegularExpression *regExp = [NSRegularExpression regularExpressionWithPattern:@"[_-]\\d(@2x)?.png" options:NSRegularExpressionCaseInsensitive error:nil];
+            NSRegularExpression *regExp = [NSRegularExpression regularExpressionWithPattern:@"[_-].*\\d.*.png" options:NSRegularExpressionCaseInsensitive error:nil];
             NSString *newImageName = [regExp stringByReplacingMatchesInString:imageName options:NSMatchingReportProgress range:NSMakeRange(0, [imageName length]) withTemplate:@""];
             if (newImageName != nil)
                 [mutablePngFiles replaceObjectAtIndex:index withObject:newImageName];
