@@ -225,6 +225,10 @@
         }
     }
 
+    // Sorting results and refreshing table
+    [_results sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    [_resultsTableView reloadData];
+
     // Calculate how much file size we saved and update the label
     int fileSize = 0;
     for (NSString *path in _results) {
