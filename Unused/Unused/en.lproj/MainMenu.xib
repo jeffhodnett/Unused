@@ -1689,7 +1689,7 @@
 							<reference key="NSNextKeyView" ref="912597709"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="76484489">
-								<int key="NSCellFlags">67108864</int>
+								<int key="NSCellFlags">-2080374784</int>
 								<int key="NSCellFlags2">0</int>
 								<string key="NSContents">.plist</string>
 								<reference key="NSSupport" ref="9003081"/>
