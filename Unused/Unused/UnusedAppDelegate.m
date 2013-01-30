@@ -53,7 +53,7 @@
 -(void)dealloc
 {
     [_searchDirectoryPath release];
-
+    [_pngFiles release];
     [_results release];
     [_retinaImagePaths release];
     [_queue release];
@@ -149,7 +149,10 @@
     [self setUIEnabled:NO];
 
     // Find all the .png files in the folder
-    NSArray *pngFiles = [self pngFilesAtDirectory:_searchDirectoryPath];
+    [_pngFiles release];
+    _pngFiles = [[self pngFilesAtDirectory:_searchDirectoryPath] retain];
+
+    NSArray *pngFiles = _pngFiles;
 
     if (SHOULD_FILTER_ENUM_VARIANTS)
     {
@@ -170,7 +173,7 @@
     }
 
     // Setup all the @2x image firstly
-    for (NSString *pngPath in pngFiles) {
+    for (NSString *pngPath in _pngFiles) {
         NSString *imageName = [pngPath lastPathComponent];
 
         // Does the image have a @2x
@@ -376,6 +379,9 @@
 
 -(void)addNewResult:(NSString *)pngPath
 {
+    if ([_pngFiles indexOfObject:pngPath] == NSNotFound)
+        return;
+
     // Add and reload
     [_results addObject:pngPath];
 

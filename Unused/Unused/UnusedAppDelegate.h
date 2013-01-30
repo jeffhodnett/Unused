@@ -12,6 +12,7 @@
 @private
 
     // Arrays
+    NSArray *_pngFiles;
     NSMutableArray *_results;
     NSMutableArray *_retinaImagePaths;
 
