@@ -318,6 +318,11 @@
         return NO;
     }
 
+    // Is the name a part of 3rd party bundle
+    if([imagePath rangeOfString:@".bundle"].length > 0) {
+        return NO;
+    }
+
     // Is the name is Default
     if([imageName isEqualToString:@"Default.png"]) {
         return NO;
