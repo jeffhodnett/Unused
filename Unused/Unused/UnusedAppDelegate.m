@@ -185,65 +185,93 @@
     }
 
     // Now loop and check
-    for (NSString *pngPath in pngFiles) {
-
-        // Check that the png path is not empty
-        if(![pngPath isEqualToString:@""]) {
-            // Grab the file name
-            NSString *imageName = [pngPath lastPathComponent];
-
-            // Check that it's not a @2x or reserved image name
-            if([self isValidImageAtPath:pngPath]) {
-
-                // Run the checks
-                if([_mCheckbox state] && [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"m"]) {
-                    continue;
-                }
-
-                if([_xibCheckbox state] && [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"xib"]) {
-                    continue;
-                }
-
-                if([_cppCheckbox state] && [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"cpp"]) {
-                    continue;
-                }
-
-                if([_mmCheckbox state] && [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"mm"]) {
-                    continue;
-                }
-
-                if([_htmlCheckbox state] && [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"html"]) {
-                    continue;
-                }
-
-                if([_plistCheckbox state] && [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"plist"]) {
-                    continue;
-                }
-
-                // Is it not found
-                // Update results
-                [self addNewResult:pngPath];
-            }
-
-        }
-    }
-
-    // Sorting results and refreshing table
-    [_results sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-    [_resultsTableView reloadData];
-
-    // Calculate how much file size we saved and update the label
-    int fileSize = 0;
-    for (NSString *path in _results) {
-        fileSize += [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil] fileSize];
-    }
-
-    [_statusLabel setStringValue:[NSString stringWithFormat:@"Completed - Found %ld - Size %@", (unsigned long)[_results count], [self stringFromFileSize:fileSize]]];
-
-    // Enable the ui
-    [self setUIEnabled:YES];
-
-    isSearching = NO;
+    [pngFiles enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+    {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+        {
+            NSString *pngPath = (NSString *)obj;
+             
+            // Check that the png path is not empty
+            if(![pngPath isEqualToString:@""]) {
+                // Grab the file name
+                NSString *imageName = [pngPath lastPathComponent];
+                
+                // Check that it's not a @2x or reserved image name
+                if([self isValidImageAtPath:pngPath]) {
+                    
+                    BOOL isSearchCancelled = NO;
+                    
+                    // Run the checks
+                    if([_mCheckbox state] &&
+                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"m"]) {
+                        isSearchCancelled = YES;
+                    }
+                    
+                    if(!isSearchCancelled &&
+                       [_xibCheckbox state] &&
+                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"xib"]) {
+                        isSearchCancelled = YES;
+                    }
+                    
+                    if(!isSearchCancelled &&
+                       [_cppCheckbox state] &&
+                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"cpp"]) {
+                        isSearchCancelled = YES;
+                    }
+                    
+                    if(!isSearchCancelled &&
+                       [_mmCheckbox state] &&
+                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"mm"]) {
+                        isSearchCancelled = YES;
+                    }
+                    
+                    if(!isSearchCancelled &&
+                       [_htmlCheckbox state] &&
+                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"html"]) {
+                        isSearchCancelled = YES;
+                    }
+                    
+                    if(!isSearchCancelled &&
+                       [_plistCheckbox state] &&
+                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"plist"]) {
+                        isSearchCancelled = YES;
+                    }
+                    
+                    // Is it not found
+                    // Update results
+                    if (!isSearchCancelled)
+                        dispatch_async(dispatch_get_main_queue(), ^
+                    {
+                        [self addNewResult:pngPath];
+                    });
+                    
+                    BOOL isLastIteration = idx == pngFiles.count - 1;
+                    if (isLastIteration)
+                    {
+                        dispatch_async(dispatch_get_main_queue(), ^
+                        {
+                            // Sorting results and refreshing table
+                            [_results sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+                            [_resultsTableView reloadData];
+                            
+                            // Calculate how much file size we saved and update the label
+                            int fileSize = 0;
+                            for (NSString *path in _results) {
+                                fileSize += [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil] fileSize];
+                            }
+                            
+                            [_statusLabel setStringValue:[NSString stringWithFormat:@"Completed - Found %ld - Size %@", (unsigned long)[_results count], [self stringFromFileSize:fileSize]]];
+                            
+                            // Enable the ui
+                            [self setUIEnabled:YES];
+                            
+                            isSearching = NO;
+                        });
+                     }
+                 }
+             }
+         });
+     }];
 }
 
 -(void)setUIEnabled:(BOOL)state
