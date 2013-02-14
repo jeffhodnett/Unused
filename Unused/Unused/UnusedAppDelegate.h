@@ -18,6 +18,10 @@
 
     NSOperationQueue *_queue;
     BOOL isSearching;
+	
+	// Stores the file data to avoid re-reading files, using a lock to make it thread-safe.
+	NSMutableDictionary *_fileData;
+	NSLock *_fileDataLock;
 }
 
 // Outlets
