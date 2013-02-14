@@ -48,6 +48,9 @@
     // Setup search button
     [_searchButton setBezelStyle:NSRoundedBezelStyle];
     [_searchButton setKeyEquivalent:@"\r"];
+	
+	_fileData = [NSMutableDictionary new];
+	_fileDataLock = [NSLock new];
 }
 
 -(void)dealloc
@@ -266,6 +269,7 @@
                             [self setUIEnabled:YES];
                             
                             isSearching = NO;
+							[_fileData removeAllObjects];
                         });
                      }
                  }
@@ -369,27 +373,36 @@
 
 -(int)occurancesOfImageNamed:(NSString *)imageName atDirectory:(NSString *)directoryPath inFileExtensionType:(NSString *)extension
 {
-    NSTask *task;
-    task = [[[NSTask alloc] init] autorelease];
-    [task setLaunchPath: @"/bin/sh"];
-
-    // Setup the call
-    NSString *cmd = [NSString stringWithFormat:@"export IFS=""; while read file; do cat $file | grep -o %@ ; done <<< $(find %@ -name *.%@)", [imageName stringByDeletingPathExtension], directoryPath, extension];
-    NSArray *argvals = [NSArray arrayWithObjects: @"-c", cmd, nil];
-    [task setArguments: argvals];
-
-    NSPipe *pipe;
-    pipe = [NSPipe pipe];
-    [task setStandardOutput: pipe];
-
-    NSFileHandle *file;
-    file = [pipe fileHandleForReading];
-
-    [task launch];
-
-    // Read the response
     NSData *data;
-    data = [file readDataToEndOfFile];
+	[_fileDataLock lock];
+	data = [_fileData objectForKey:directoryPath];
+	
+	if (data == nil)
+	{
+		NSTask *task;
+		task = [[[NSTask alloc] init] autorelease];
+		[task setLaunchPath: @"/bin/sh"];
+		
+		// Setup the call
+		NSString *cmd = [NSString stringWithFormat:@"export IFS=""; while read file; do cat $file | grep -o %@ ; done <<< $(find %@ -name *.%@)", [imageName stringByDeletingPathExtension], directoryPath, extension];
+		NSArray *argvals = [NSArray arrayWithObjects: @"-c", cmd, nil];
+		[task setArguments: argvals];
+		
+		NSPipe *pipe;
+		pipe = [NSPipe pipe];
+		[task setStandardOutput: pipe];
+		
+		NSFileHandle *file;
+		file = [pipe fileHandleForReading];
+		
+		[task launch];
+		
+		// Read the response
+		data = [file readDataToEndOfFile];
+		
+		[_fileData setObject:data forKey:directoryPath];
+	}
+	[_fileDataLock unlock];
 
     NSString *string;
     string = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
