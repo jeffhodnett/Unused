@@ -223,6 +223,12 @@
                     }
                     
                     if(!isSearchCancelled &&
+                       [_cppCheckbox state] &&
+                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"storyboard"]) {
+                        isSearchCancelled = YES;
+                    }
+                    
+                    if(!isSearchCancelled &&
                        [_mmCheckbox state] &&
                        [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"mm"]) {
                         isSearchCancelled = YES;
