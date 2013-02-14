@@ -269,6 +269,7 @@
                             [self setUIEnabled:YES];
                             
                             isSearching = NO;
+							[_fileData removeAllObjects];
                         });
                      }
                  }
