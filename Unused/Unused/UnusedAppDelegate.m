@@ -354,6 +354,11 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
         return NO;
     }
 
+    // Is it a universal image
+    if([imagePath rangeOfString:@"~ipad" options:NSCaseInsensitiveSearch].length > 0) {
+        return NO;
+    }
+    
     return YES;
 }
 
