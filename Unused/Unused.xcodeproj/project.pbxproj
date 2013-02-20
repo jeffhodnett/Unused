@@ -14,6 +14,7 @@
 		1F55B4BB1478097A008A4B0E /* UnusedAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F55B4BA1478097A008A4B0E /* UnusedAppDelegate.m */; };
 		1F55B4BE1478097A008A4B0E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F55B4BC1478097A008A4B0E /* MainMenu.xib */; };
 		1F6EFD7A147E597400F8950E /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1F6EFD79147E597400F8950E /* Icon.icns */; };
+		1F93632A16D4AC5E00EF0774 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1F93632C16D4AC5E00EF0774 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,8 @@
 		1F55B4BA1478097A008A4B0E /* UnusedAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnusedAppDelegate.m; sourceTree = "<group>"; };
 		1F55B4BD1478097A008A4B0E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		1F6EFD79147E597400F8950E /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
+		1F93632B16D4AC5E00EF0774 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1F93632D16D4AC7200EF0774 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +98,7 @@
 		1F55B4AE1478097A008A4B0E /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				1F93632C16D4AC5E00EF0774 /* Localizable.strings */,
 				1F6EFD79147E597400F8950E /* Icon.icns */,
 				1F55B4AF1478097A008A4B0E /* Unused-Info.plist */,
 				1F55B4B01478097A008A4B0E /* InfoPlist.strings */,
@@ -139,6 +143,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				fr,
 			);
 			mainGroup = 1F55B4981478097A008A4B0E;
 			productRefGroup = 1F55B4A41478097A008A4B0E /* Products */;
@@ -159,6 +164,7 @@
 				1F55B4B81478097A008A4B0E /* Credits.rtf in Resources */,
 				1F55B4BE1478097A008A4B0E /* MainMenu.xib in Resources */,
 				1F6EFD7A147E597400F8950E /* Icon.icns in Resources */,
+				1F93632A16D4AC5E00EF0774 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,6 +205,15 @@
 				1F55B4BD1478097A008A4B0E /* en */,
 			);
 			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		1F93632C16D4AC5E00EF0774 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1F93632B16D4AC5E00EF0774 /* en */,
+				1F93632D16D4AC7200EF0774 /* fr */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

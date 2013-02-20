@@ -22,11 +22,17 @@
 @synthesize mmCheckbox=_mmCheckbox;
 @synthesize htmlCheckbox =_htmlCheckbox;
 @synthesize plistCheckbox =_plistCheckbox;
+@synthesize cssCheckbox =_cssCheckbox;
 @synthesize browseButton=_browseButton;
 @synthesize pathTextField=_pathTextField;
 @synthesize searchButton=_searchButton;
 @synthesize exportButton=_exportButton;
 @synthesize searchDirectoryPath=_searchDirectoryPath;
+
+// Constant strings
+NSString const *kSettingControlKey = @"kSettingControlKey";
+NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
+
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
@@ -93,7 +99,7 @@
         NSString *selectedFile = [[save URL] path];
 
         NSMutableString *outputResults = [[NSMutableString alloc] init];
-        [outputResults appendFormat:@"Unused Files in project %@\n\n",self.searchDirectoryPath];
+        [outputResults appendFormat:NSLocalizedString(@"ExportSummaryTitle", @""), self.searchDirectoryPath];
 
         for (NSString *path in _results) {
             [outputResults appendFormat:@"%@\n",path];
@@ -112,8 +118,8 @@
     if(!self.searchDirectoryPath) {
         // Show an alert
         NSAlert *alert = [[[NSAlert alloc] init] autorelease];
-        [alert setMessageText:@"Project Path Error"];
-        [alert setInformativeText:@"Please select a valid project folder!"];
+        [alert setMessageText:NSLocalizedString(@"ProjectPathErrorTitle", @"")];
+        [alert setInformativeText:NSLocalizedString(@"PleaseSelectValidPathErrorMessage", @"")];
         [alert runModal];
 
         return;
@@ -122,8 +128,8 @@
     // Check the path
     if(![[NSFileManager defaultManager] fileExistsAtPath:self.searchDirectoryPath]) {
         NSAlert *alert = [[[NSAlert alloc] init] autorelease];
-        [alert setMessageText:@"Project Path Error"];
-        [alert setInformativeText:@"Path is not valid!! Please select a valid project folder!"];
+        [alert setMessageText:NSLocalizedString(@"ProjectPathErrorTitle", @"")];
+        [alert setInformativeText:NSLocalizedString(@"InvalidFolderPathErrorMessage", @"")];
         [alert runModal];
 
         return;
@@ -201,51 +207,31 @@
                 
                 // Check that it's not a @2x or reserved image name
                 if([self isValidImageAtPath:pngPath]) {
-                    
+                                        
+                    // Settings items
+                    NSArray *settingsItems = [NSArray arrayWithObjects:
+                                              [NSDictionary dictionaryWithObjectsAndKeys:_mCheckbox, kSettingControlKey, @"m", kSettingExtensionKey, nil],
+                                              [NSDictionary dictionaryWithObjectsAndKeys:_xibCheckbox, kSettingControlKey, @"xib", kSettingExtensionKey, nil],
+                                              [NSDictionary dictionaryWithObjectsAndKeys:_cppCheckbox, kSettingControlKey, @"cpp", kSettingExtensionKey, nil],
+                                              [NSDictionary dictionaryWithObjectsAndKeys:_mmCheckbox, kSettingControlKey, @"mm", kSettingExtensionKey, nil],
+                                              [NSDictionary dictionaryWithObjectsAndKeys:_htmlCheckbox, kSettingControlKey, @"html", kSettingExtensionKey, nil],
+                                              [NSDictionary dictionaryWithObjectsAndKeys:_cssCheckbox, kSettingControlKey, @"css", kSettingExtensionKey, nil],
+                                              [NSDictionary dictionaryWithObjectsAndKeys:_plistCheckbox, kSettingControlKey, @"plist", kSettingExtensionKey, nil],
+
+                                       nil];
                     BOOL isSearchCancelled = NO;
-                    
-                    // Run the checks
-                    if([_mCheckbox state] &&
-                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"m"]) {
-                        isSearchCancelled = YES;
+                    for (NSDictionary *settingDic in settingsItems) {
+                        // Get the items
+                        id checkbox = [settingDic objectForKey:kSettingControlKey];
+                        NSString *extension = [settingDic objectForKey:kSettingControlKey];
+                        
+                        // Run the check
+                        if(!isSearchCancelled && [checkbox state] &&
+                           [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:extension]) {
+                            isSearchCancelled = YES;
+                        }
                     }
-                    
-                    if(!isSearchCancelled &&
-                       [_xibCheckbox state] &&
-                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"xib"]) {
-                        isSearchCancelled = YES;
-                    }
-                    
-                    if(!isSearchCancelled &&
-                       [_cppCheckbox state] &&
-                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"cpp"]) {
-                        isSearchCancelled = YES;
-                    }
-                    
-                    if(!isSearchCancelled &&
-                       [_cppCheckbox state] &&
-                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"storyboard"]) {
-                        isSearchCancelled = YES;
-                    }
-                    
-                    if(!isSearchCancelled &&
-                       [_mmCheckbox state] &&
-                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"mm"]) {
-                        isSearchCancelled = YES;
-                    }
-                    
-                    if(!isSearchCancelled &&
-                       [_htmlCheckbox state] &&
-                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"html"]) {
-                        isSearchCancelled = YES;
-                    }
-                    
-                    if(!isSearchCancelled &&
-                       [_plistCheckbox state] &&
-                       [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:@"plist"]) {
-                        isSearchCancelled = YES;
-                    }
-                    
+                                        
                     // Is it not found
                     // Update results
                     if (!isSearchCancelled)
@@ -269,7 +255,7 @@
                                 fileSize += [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil] fileSize];
                             }
                             
-                            [_statusLabel setStringValue:[NSString stringWithFormat:@"Completed - Found %ld - Size %@", (unsigned long)[_results count], [self stringFromFileSize:fileSize]]];
+                            [_statusLabel setStringValue:[NSString stringWithFormat:NSLocalizedString(@"CompletedResultMessage", @""), (unsigned long)[_results count], [self stringFromFileSize:fileSize]]];
                             
                             // Enable the ui
                             [self setUIEnabled:YES];
@@ -286,36 +272,30 @@
 
 -(void)setUIEnabled:(BOOL)state
 {
+    // Individual
     if(state) {
-        [_searchButton setTitle:@"Search"];
+        [_searchButton setTitle:NSLocalizedString(@"Search", @"")];
         [_searchButton setKeyEquivalent:@"\r"];
-        [_searchButton setEnabled:YES];
-        [_processIndicator setHidden:YES];
         [_processIndicator stopAnimation:self];
-        [_mCheckbox setEnabled:YES];
-        [_xibCheckbox setEnabled:YES];
-        [_cppCheckbox setEnabled:YES];
-        [_mmCheckbox setEnabled:YES];
-        [_htmlCheckbox setEnabled:YES];
-        [_plistCheckbox setEnabled:YES];
-        [_browseButton setEnabled:YES];
-        [_pathTextField setEnabled:YES];
-        [_exportButton setHidden:NO];
     }
     else {
-        [_processIndicator setHidden:NO];
         [_processIndicator startAnimation:self];
-        [_statusLabel setStringValue:@"Searching..."];
-        [_mCheckbox setEnabled:NO];
-        [_xibCheckbox setEnabled:NO];
-        [_cppCheckbox setEnabled:NO];
-        [_mmCheckbox setEnabled:NO];
-        [_htmlCheckbox setEnabled:NO];
-        [_plistCheckbox setEnabled:NO];
-        [_browseButton setEnabled:NO];
-        [_pathTextField setEnabled:NO];
-        [_exportButton setHidden:YES];
+        [_statusLabel setStringValue:NSLocalizedString(@"Searching", @"")];
     }
+    
+    // Button groups
+    [_searchButton setEnabled:state];
+    [_processIndicator setHidden:state];
+    [_mCheckbox setEnabled:state];
+    [_xibCheckbox setEnabled:state];
+    [_cppCheckbox setEnabled:state];
+    [_mmCheckbox setEnabled:state];
+    [_htmlCheckbox setEnabled:state];
+    [_plistCheckbox setEnabled:state];
+    [_cssCheckbox setEnabled:state];
+    [_browseButton setEnabled:state];
+    [_pathTextField setEnabled:state];
+    [_exportButton setHidden:!state];
 }
 
 -(NSArray *)pngFilesAtDirectory:(NSString *)directoryPath
@@ -468,9 +448,17 @@
 
 -(id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)rowIndex
 {
+    // Get the unused image
     NSString *pngPath = [_results objectAtIndex:rowIndex];
-
-    if ([[tableColumn identifier] isEqualToString:@"shortName"])
+    
+    // Check the column
+    if ([[tableColumn identifier] isEqualToString:@"ImageIcon"])
+    {
+        // Return an image object
+        NSImage *img = [[[NSImage alloc] initByReferencingFile:pngPath] autorelease];
+        return img;
+    }
+    else if ([[tableColumn identifier] isEqualToString:@"ImageShortName"])
     {
         NSString *imageName = [pngPath lastPathComponent];
         return imageName;
