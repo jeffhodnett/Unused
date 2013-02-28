@@ -193,10 +193,13 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
         }
     }
 
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_group_t group = dispatch_group_create();
+        
     // Now loop and check
     [pngFiles enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
     {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+        dispatch_group_async(group, queue, ^
         {
             NSString *pngPath = (NSString *)obj;
              
@@ -239,35 +242,34 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
                     {
                         [self addNewResult:pngPath];
                     });
-                    
-                    BOOL isLastIteration = idx == pngFiles.count - 1;
-                    if (isLastIteration)
-                    {
-                        dispatch_async(dispatch_get_main_queue(), ^
-                        {
-                            // Sorting results and refreshing table
-                            [_results sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-                            [_resultsTableView reloadData];
-                            
-                            // Calculate how much file size we saved and update the label
-                            int fileSize = 0;
-                            for (NSString *path in _results) {
-                                fileSize += [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil] fileSize];
-                            }
-                            
-                            [_statusLabel setStringValue:[NSString stringWithFormat:NSLocalizedString(@"CompletedResultMessage", @""), (unsigned long)[_results count], [self stringFromFileSize:fileSize]]];
-                            
-                            // Enable the ui
-                            [self setUIEnabled:YES];
-                            
-                            isSearching = NO;
-							[_fileData removeAllObjects];
-                        });
-                     }
                  }
              }
          });
      }];
+    
+    dispatch_group_notify(group, queue, ^
+    {
+        dispatch_async(dispatch_get_main_queue(), ^
+        {
+            // Sorting results and refreshing table
+            [_results sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+            [_resultsTableView reloadData];
+            
+            // Calculate how much file size we saved and update the label
+            int fileSize = 0;
+            for (NSString *path in _results) {
+                fileSize += [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil] fileSize];
+            }
+            
+            [_statusLabel setStringValue:[NSString stringWithFormat:NSLocalizedString(@"CompletedResultMessage", @""), (unsigned long)[_results count], [self stringFromFileSize:fileSize]]];
+            
+            // Enable the ui
+            [self setUIEnabled:YES];
+            
+            isSearching = NO;
+            [_fileData removeAllObjects];
+        });
+    });
 }
 
 -(void)setUIEnabled:(BOOL)state
