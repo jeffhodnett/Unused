@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>icon</key>
+		<string>star</string>
+		<key>iconPushed</key>
+		<string>starPushed</string>
+		<key>viewController</key>
+		<string>JHDropZoneViewController</string>
+	</dict>
+	<dict>
+		<key>icon</key>
+		<string>watch</string>
+		<key>iconPushed</key>
+		<string>watchPushed</string>
+		<key>viewController</key>
+		<string>JHScanSettingsViewController</string>
+	</dict>
+	<dict>
+		<key>icon</key>
+		<string>tag</string>
+		<key>iconPushed</key>
+		<string>tagPushed</string>
+		<key>viewController</key>
+		<string>JHResultsViewController</string>
+	</dict>
+</array>
+</plist>
