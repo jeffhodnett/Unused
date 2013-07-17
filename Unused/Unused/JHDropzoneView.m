@@ -19,10 +19,19 @@
     [self registerForDraggedTypes:[NSArray arrayWithObjects:NSFilenamesPboardType, nil]];
     
     // Setup state
-    viewState = JHDropzoneStateNormal;
+    _viewState = JHDropzoneStateNormal;
+    
+    // Add speech bubble
+    float speechBubbleW = 200.0f;
+    float speechBubbleH = 200.0f;
+    CGRect speechBubbleRect = CGRectMake(0.5f*(self.bounds.size.width-speechBubbleW), 0.5f*(self.bounds.size.height-speechBubbleH), speechBubbleW, speechBubbleH);
+    _speechBubbleView = [[JHSpeechBubbleView alloc] initWithFrame:speechBubbleRect];
+    [_speechBubbleView setBubbleText:[self textStatusForState:_viewState]];
+    [_speechBubbleView setPointerPosition:JHSpeechBubblePointerPositionBottomCenter];
+    [self addSubview:_speechBubbleView];
     
     // Add image
-    NSImage *dropzoneImage = [self imageForState:viewState];
+    NSImage *dropzoneImage = [self imageForState:_viewState];
     CGRect rect = CGRectMake(0.5f*(self.bounds.size.width-dropzoneImage.size.width), 0.5f*(self.bounds.size.height-dropzoneImage.size.height), dropzoneImage.size.width, dropzoneImage.size.height);
     _dropzoneImageView = [[NSImageView alloc] initWithFrame:rect];
     [_dropzoneImageView setImage:dropzoneImage];
@@ -32,6 +41,7 @@
 - (void)dealloc
 {
     [_dropzoneImageView release];
+    [_speechBubbleView release];
     
     [super dealloc];
 }
@@ -39,27 +49,13 @@
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
     // Check the item
-    NSPasteboard *pboard = [sender draggingPasteboard];
-    
-    if ([[pboard types] containsObject:NSFilenamesPboardType]) {
+    if(![self isValidDraggableFolder:sender]) {
+        // Update state
+        [self setState:JHDropzoneStateEnterBad];
         
-        NSArray *paths = [pboard propertyListForType:NSFilenamesPboardType];
-        for (NSString *path in paths) {
-            
-            NSError *error = nil;
-            NSString *utiType = [[NSWorkspace sharedWorkspace]
-                                 typeOfFile:path error:&error];
-            if (![[NSWorkspace sharedWorkspace] type:utiType conformsToType:(id)kUTTypeFolder]) {
-                
-                // Update state
-                [self setState:JHDropzoneStateEnterBad];
-                
-                return NSDragOperationNone;
-            }
-            
-        }
+        return NSDragOperationNone;
     }
-    
+        
     // Update state
     [self setState:JHDropzoneStateEnterGood];
     
@@ -74,24 +70,14 @@
 
 - (void)concludeDragOperation:(id <NSDraggingInfo>)sender
 {
-    NSPasteboard *pboard = [sender draggingPasteboard];
-    
-    if ([[pboard types] containsObject:NSFilenamesPboardType]) {
+    // Validate the dragged item
+    NSString *path = nil;
+    if([self isValidDraggableFolder:sender path:&path]) {
+        NSLog(@"path is %@", path);
         
-        NSArray *paths = [pboard propertyListForType:NSFilenamesPboardType];
-        for (NSString *path in paths) {
-            // Error check
-            NSError *error = nil;
-            NSString *utiType = [[NSWorkspace sharedWorkspace]
-                                 typeOfFile:path error:&error];
-            if ([[NSWorkspace sharedWorkspace] type:utiType conformsToType:(id)kUTTypeFolder]) {
-                
-                // Notify the delegate
-                if(self.delegate && [self.delegate respondsToSelector:@selector(dropzoneView:didReceiveFolder:)]) {
-                    [self.delegate dropzoneView:self didReceiveFolder:path];
-                }
-            }
-            
+        // Notify the delegate
+        if(self.delegate && [self.delegate respondsToSelector:@selector(dropzoneView:didReceiveFolder:)]) {
+            [self.delegate dropzoneView:self didReceiveFolder:path];
         }
     }
 }
@@ -106,6 +92,52 @@
     [self setState:JHDropzoneStateNormal];
     
     return YES;
+}
+
+- (BOOL)isValidDraggableFolder:(id <NSDraggingInfo>)sender path:(NSString **)folderPath
+{
+    // Check drag pasteboard
+    NSPasteboard *pboard = [sender draggingPasteboard];
+    if ([[pboard types] containsObject:NSFilenamesPboardType]) {
+        
+        // Get paths
+        NSArray *paths = [pboard propertyListForType:NSFilenamesPboardType];
+        
+        // We are only expecting one item
+        if([paths count] > 1)
+            return NO;
+        
+        // Get item
+        NSString *path = [paths objectAtIndex:0];
+        if(folderPath != NULL) {
+            *folderPath = [NSString stringWithString:path];
+        }
+        
+        // Ensure is a folder
+        NSError *error = nil;
+        NSString *utiType = [[NSWorkspace sharedWorkspace] typeOfFile:path error:&error];
+        
+        // Error check
+        if(error != nil) {
+            NSLog(@"Drag Error: %@", [error localizedDescription]);
+            return NO;
+        }
+        
+        // Ensure is a folder
+        if (![[NSWorkspace sharedWorkspace] type:utiType conformsToType:(id)kUTTypeFolder]) {
+            return NO;
+        }
+        
+        // Ensure is an xcode project folder
+#warning implement me!!
+    }
+    
+    return YES;
+}
+
+- (BOOL)isValidDraggableFolder:(id <NSDraggingInfo>)sender
+{
+    return [self isValidDraggableFolder:sender path:NULL];
 }
 
 - (NSImage *)imageForState:(JHDropzoneState)state
@@ -128,14 +160,32 @@
     return dropzoneImage;
 }
 
+- (NSString *)textStatusForState:(JHDropzoneState)state
+{
+    switch (state) {
+        case JHDropzoneStateEnterGood:
+            return @"Folder is good!";
+            break;
+        case JHDropzoneStateEnterBad:
+            return @"Bad file!!";
+            break;
+        case JHDropzoneStateNormal:
+        default:
+            break;
+    }
+    return @"Drop a folder!";
+}
+
 -(void)setState:(JHDropzoneState)state
 {
-    viewState = state;
+    _viewState = state;
     
     // Update image
-    NSImage *image = [self imageForState:viewState];
-    [_dropzoneImageView setImage:image];
+    [_dropzoneImageView setImage:[self imageForState:_viewState]];
 
+    // Update bubble text
+    [_speechBubbleView setBubbleText:[self textStatusForState:_viewState]];
+    
     // Redraw
     [self setNeedsDisplay:YES];
 }
@@ -149,7 +199,7 @@
     [path setLineWidth:5.0f];
 
     double lineDash[6];
-    lineDash[0] = 40.0;
+    lineDash[0] = 20.0;
     lineDash[1] = 12.0;
     lineDash[2] = 8.0;
     lineDash[3] = 12.0;
@@ -163,16 +213,27 @@
     [path stroke];
         
     // Extra drawing based on state
-    if(viewState == JHDropzoneStateEnterBad) {
+    if(_viewState == JHDropzoneStateEnterGood) {
+        [NSBezierPath setDefaultLineWidth:6.0];
+        [[NSColor greenColor] set];
+        [NSBezierPath strokeRect:frame];
+    }
+    else if(_viewState == JHDropzoneStateEnterBad) {
         [NSBezierPath setDefaultLineWidth:6.0];
         [[NSColor redColor] set];
         [NSBezierPath strokeRect:frame];
     }
     
+    // Update speech bubble position
+    CGRect speechBubbleRect = _speechBubbleView.frame;
+    speechBubbleRect.origin.x = 0.5f *(self.bounds.size.width-speechBubbleRect.size.width);
+    speechBubbleRect.origin.y = 0.5f * (self.bounds.size.height-speechBubbleRect.size.height)+100.0f;
+    [_speechBubbleView setFrame:speechBubbleRect];
+    
     // Update image position
     CGRect imageFrame = _dropzoneImageView.frame;
     imageFrame.origin.x = 0.5f * (self.bounds.size.width-imageFrame.size.width);
-    imageFrame.origin.y = 0.5f*(self.bounds.size.height-imageFrame.size.height);
+    imageFrame.origin.y = speechBubbleRect.origin.y-imageFrame.size.height;
     [_dropzoneImageView setFrame:imageFrame];
 }
 

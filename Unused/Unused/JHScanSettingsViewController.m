@@ -36,10 +36,10 @@
 #pragma mark - Actions
 - (IBAction)continueSelected:(id)sender
 {
-    // Notify delegate
+    // Notify delegate of setting
     if(self.delegate && [self.delegate respondsToSelector:@selector(viewController:didChooseSetting:)]) {
         // Pass setting to delegate
-        JHScanFilesSetting *setting = [[JHScanFilesSetting alloc] init];
+        JHScanFilesSetting *setting = [JHScanFilesSetting setting];
         setting.mCheckboxSelected = [_mCheckbox state];
         setting.xibCheckbox = [_xibCheckbox state];
         setting.cppCheckbox = [_cppCheckbox state];
@@ -48,7 +48,6 @@
         setting.plistCheckbox = [_plistCheckbox state];
         setting.cssCheckbox = [_cssCheckbox state];
         [self.delegate viewController:self didChooseSetting:setting];
-        [setting release];
     }
 }
 

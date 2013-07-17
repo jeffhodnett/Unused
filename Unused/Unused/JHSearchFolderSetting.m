@@ -19,4 +19,9 @@
     [super dealloc];
 }
 
+-(NSString *)description
+{
+    return [NSString stringWithFormat:@"setting - path - %@", self.searchDirectoryPath];
+}
+
 @end

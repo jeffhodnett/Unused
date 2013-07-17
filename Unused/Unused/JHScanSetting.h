@@ -10,4 +10,6 @@
 
 @interface JHScanSetting : NSObject
 
++ (id)setting;
+
 @end

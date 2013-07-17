@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "JHSpeechBubbleView.h"
 
 @class  JHDropzoneView;
 
@@ -26,8 +27,10 @@ typedef enum {
 
 @interface JHDropzoneView : NSView
 {
-    JHDropzoneState viewState;
+    JHDropzoneState _viewState;
     NSImageView *_dropzoneImageView;
+    
+    JHSpeechBubbleView *_speechBubbleView;
 }
 
 @property (assign) id<JHDropzoneViewDelegate> delegate;

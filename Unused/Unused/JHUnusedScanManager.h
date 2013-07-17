@@ -7,10 +7,25 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "JHScanSetting.h"
+
+@class JHUnusedScanManager;
+
+@protocol JHUnusedScanManagerDelegate <NSObject>
+
+@optional
+
+-(void)scanManagerDidStartScan:(JHUnusedScanManager *)manager;
+-(void)scanManager:(JHUnusedScanManager *)manager didFindResult:(NSString *)result;
+-(void)scanManager:(JHUnusedScanManager *)manager finishedScanWithResults:(NSArray *)results;
+-(void)scanManager:(JHUnusedScanManager *)manager didFailWithError:(NSError *)error;
+
+@end
 
 @interface JHUnusedScanManager : NSObject
-{
-    NSString *_searchDirectoryPath;
+{    
+    // Settings
+    NSMutableArray *_settings;
     
     // Arrays
     NSArray *_pngFiles;
@@ -18,20 +33,22 @@
     NSMutableArray *_retinaImagePaths;
     
     NSOperationQueue *_queue;
-    BOOL isSearching;
 	
 	// Stores the file data to avoid re-reading files, using a lock to make it thread-safe.
 	NSMutableDictionary *_fileData;
 	NSLock *_fileDataLock;
 }
 
+@property(nonatomic, assign) id<JHUnusedScanManagerDelegate> delegate;
+
 + (id)sharedManager;
 
 // Methods
--(NSArray *)pngFilesAtDirectory:(NSString *)directoryPath;
--(BOOL)isValidImageAtPath:(NSString *)imagePath;
--(int)occurancesOfImageNamed:(NSString *)imageName atDirectory:(NSString *)directoryPath inFileExtensionType:(NSString *)extension;
+- (void)addSetting:(JHScanSetting *)setting atIndex:(NSInteger)index;
 
--(void)addNewResult:(NSString *)pngPath;
+- (void)startScan;
+- (void)cancelScan;
+
+- (NSArray *)results;
 
 @end

@@ -21,6 +21,4 @@
 -(IBAction)startSearch:(id)sender;
 -(IBAction)exportButtonSelected:(id)sender;
 
--(NSString *)stringFromFileSize:(int)theSize;
-
 @end

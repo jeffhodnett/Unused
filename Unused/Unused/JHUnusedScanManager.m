@@ -7,6 +7,7 @@
 //
 
 #import "JHUnusedScanManager.h"
+#import "JHSearchFolderSetting.h"
 
 #define SHOULD_FILTER_ENUM_VARIANTS YES
 
@@ -14,7 +15,18 @@
 NSString const *kSettingControlKey = @"kSettingControlKey";
 NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
 
+@interface JHUnusedScanManager (Private)
+
+-(NSArray *)pngFilesAtDirectory:(NSString *)directoryPath;
+-(BOOL)isValidImageAtPath:(NSString *)imagePath;
+-(int)occurancesOfImageNamed:(NSString *)imageName atDirectory:(NSString *)directoryPath inFileExtensionType:(NSString *)extension;
+-(void)addNewResult:(NSString *)pngPath;
+
+@end
+
 @implementation JHUnusedScanManager
+
+@synthesize delegate=_delegate;
 
 + (id)sharedManager
 {
@@ -30,18 +42,21 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
 {
     if (self = [super init]) {
         
-         // Setup the results array
-         _results = [[NSMutableArray alloc] init];
-         
-         // Setup the retina images array
-         _retinaImagePaths = [[NSMutableArray alloc] init];
-         
-         // Setup the queue
-         _queue = [[NSOperationQueue alloc] init];
+        // Setup the settings
+        _settings = [[NSMutableArray alloc] init];
+        
+        // Setup the results array
+        _results = [[NSMutableArray alloc] init];
+
+        // Setup the retina images array
+        _retinaImagePaths = [[NSMutableArray alloc] init];
+
+        // Setup the queue
+        _queue = [[NSOperationQueue alloc] init];
         
         // Setup lock
-         _fileData = [NSMutableDictionary new];
-         _fileDataLock = [NSLock new];
+        _fileData = [NSMutableDictionary new];
+        _fileDataLock = [NSLock new];
     }
     return self;
 }
@@ -49,28 +64,53 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
 -(void)dealloc
 {
     // Never ever say never ever - MacGruber
+    [_settings release];
+    
+    [_results release];
+    [_retinaImagePaths release];
+    [_fileData release];
+    [_fileDataLock release];
+    
+    [_queue cancelAllOperations];
+    [_queue release];
     
     [super dealloc];
 }
 
-#pragma mark - Actions
--(IBAction)browseButtonSelected:(id)sender
+#pragma mark - Settings
+- (void)addSetting:(JHScanSetting *)setting atIndex:(NSInteger)index
 {
-    // Show an open panel
-    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-    
-    [openPanel setCanChooseDirectories:YES];
-    [openPanel setCanChooseFiles:NO];
-    
-    NSInteger option = [openPanel runModal];
-    if (option == NSOKButton) {
-        // Store the path
-        //        self.searchDirectoryPath = [[openPanel directoryURL] path];
-    }
+    // Add setting
+    [_settings insertObject:setting atIndex:index];
 }
 
--(IBAction)startSearch:(id)sender
+- (NSString *)searchDirectoryPath
 {
+#warning DEBUG
+    return @"/Users/jeff/Desktop/PhotoScroller";
+    
+    for (JHScanSetting *setting in _settings) {
+        if([setting isKindOfClass:[JHSearchFolderSetting class]]) {
+            JHSearchFolderSetting *folderSetting = (JHSearchFolderSetting *)setting;
+            return [folderSetting searchDirectoryPath];
+        }
+    }
+    
+    return nil;
+}
+
+#pragma mark - Scan
+- (void)cancelScan
+{
+    // Cancel operations
+    [_queue cancelAllOperations];
+}
+
+- (void)startScan
+{
+    // Check settings
+    NSLog(@"_settings %@", _settings);    
+    
     // Check for a path
 //    if(!self.searchDirectoryPath) {
 //        // Show an alert
@@ -100,15 +140,13 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
     NSInvocationOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(runImageSearch) object:nil];
     [_queue addOperation:op];
     [op release];
-    
-    isSearching = YES;
 }
 
 -(void)runImageSearch
 {
     // Find all the .png files in the folder
     [_pngFiles release];
-    _pngFiles = [[self pngFilesAtDirectory:_searchDirectoryPath] retain];
+    _pngFiles = [[self pngFilesAtDirectory:[self searchDirectoryPath]] retain];
     
     NSArray *pngFiles = _pngFiles;
     
@@ -180,7 +218,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
                                               
                                               // Run the check
                                               if(!isSearchCancelled && [checkbox state] &&
-                                                 [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:extension]) {
+                                                 [self occurancesOfImageNamed:imageName atDirectory:[self searchDirectoryPath] inFileExtensionType:extension]) {
                                                   isSearchCancelled = YES;
                                               }
                                           }
@@ -201,21 +239,14 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
                           {
                               dispatch_async(dispatch_get_main_queue(), ^
                                              {
-                                                 // Sorting results and refreshing table
+                                                 // Sorting results
                                                  [_results sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
                                                  
-                                                 // Calculate how much file size we saved and update the label
-                                                 int fileSize = 0;
-                                                 for (NSString *path in _results) {
-                                                     fileSize += [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil] fileSize];
+                                                 // Notify the delegate its complete
+                                                 if(self.delegate && [self.delegate respondsToSelector:@selector(scanManager:finishedScanWithResults:)]) {
+                                                     [self.delegate scanManager:self finishedScanWithResults:_results];
                                                  }
                                                  
-//                                                 [_statusLabel setStringValue:[NSString stringWithFormat:NSLocalizedString(@"CompletedResultMessage", @""), (unsigned long)[_results count], [self stringFromFileSize:fileSize]]];
-                                                 
-                                                 // Enable the ui
-//                                                 [self setUIEnabled:YES];
-                                                 
-                                                 isSearching = NO;
                                                  [_fileData removeAllObjects];
                                              });
                           });
@@ -359,14 +390,15 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
         }
     }
     
-//    // Reload
-//    [_resultsTableView reloadData];
-//    
-//    // Scroll to the bottom
-//    NSInteger numberOfRows = [_resultsTableView numberOfRows];
-//    if (numberOfRows > 0)
-//        [_resultsTableView scrollRowToVisible:numberOfRows - 1];
+    // Notify the delegate
+    if(self.delegate && [self.delegate respondsToSelector:@selector(scanManager:didFindResult:)]) {
+        [self.delegate scanManager:self didFindResult:pngPath];
+    }
 }
 
+- (NSArray *)results
+{
+    return _results;
+}
 
 @end

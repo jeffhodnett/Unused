@@ -11,6 +11,7 @@
 #import "ITSidebar.h"
 #import "JHViewData.h"
 #import "JHScanSetting.h"
+#import "JHUnusedScanManager.h"
 
 @implementation UnusedAppDelegate
 
@@ -70,8 +71,6 @@
 #pragma JHViewControllerDelegate Method
 -(void)viewController:(JHViewController *)vc didChooseSetting:(JHScanSetting *)setting
 {
-    NSLog(@"setting=%@",setting);
-    
     // Get view index data
     int viewIndex = [vc viewIndex];
     int nextIndex = viewIndex + 1;
@@ -79,7 +78,8 @@
         [self.sidebar setSelectedIndex:nextIndex];
     }
     
-#warning do something with the setting
+    // Remember the setting
+    [[JHUnusedScanManager sharedManager] addSetting:setting atIndex:viewIndex];
 }
 
 -(void)setCurrentViewIndex:(int)index

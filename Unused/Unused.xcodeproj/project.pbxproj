@@ -48,6 +48,7 @@
 		1F6BB10E1746645800523659 /* JHScanFilesSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6BB10D1746645800523659 /* JHScanFilesSetting.m */; };
 		1F6EFD7A147E597400F8950E /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1F6EFD79147E597400F8950E /* Icon.icns */; };
 		1F93632A16D4AC5E00EF0774 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1F93632C16D4AC5E00EF0774 /* Localizable.strings */; };
+		1F98ABE71759007A00A647A8 /* JHSpeechBubbleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F98ABE61759007A00A647A8 /* JHSpeechBubbleView.m */; };
 		1FABB8D21744F6660027315D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FABB8D11744F6660027315D /* QuartzCore.framework */; };
 		1FABB8D61744FA690027315D /* RMSkinnedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FABB8D51744FA690027315D /* RMSkinnedView.m */; };
 		1FABB8DC174508AB0027315D /* JHScanSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FABB8DA174508AB0027315D /* JHScanSettingsViewController.m */; };
@@ -118,6 +119,8 @@
 		1F6EFD79147E597400F8950E /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
 		1F93632B16D4AC5E00EF0774 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1F93632D16D4AC7200EF0774 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1F98ABE51759007A00A647A8 /* JHSpeechBubbleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JHSpeechBubbleView.h; sourceTree = "<group>"; };
+		1F98ABE61759007A00A647A8 /* JHSpeechBubbleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHSpeechBubbleView.m; sourceTree = "<group>"; };
 		1FABB8D11744F6660027315D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		1FABB8D41744FA690027315D /* RMSkinnedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMSkinnedView.h; sourceTree = "<group>"; };
 		1FABB8D51744FA690027315D /* RMSkinnedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMSkinnedView.m; sourceTree = "<group>"; };
@@ -334,6 +337,8 @@
 				1F32B8511743A33C0093C380 /* JHDropZoneViewController.xib */,
 				1FABB8DE174512310027315D /* JHDropzoneView.h */,
 				1FABB8DF174512310027315D /* JHDropzoneView.m */,
+				1F98ABE51759007A00A647A8 /* JHSpeechBubbleView.h */,
+				1F98ABE61759007A00A647A8 /* JHSpeechBubbleView.m */,
 			);
 			name = "1 Drop Zone";
 			sourceTree = "<group>";
@@ -485,6 +490,7 @@
 				1F6BB1051746582E00523659 /* JHScanSetting.m in Sources */,
 				1F6BB1081746584400523659 /* JHSearchFolderSetting.m in Sources */,
 				1F6BB10E1746645800523659 /* JHScanFilesSetting.m in Sources */,
+				1F98ABE71759007A00A647A8 /* JHSpeechBubbleView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

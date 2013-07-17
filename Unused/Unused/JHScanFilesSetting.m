@@ -21,13 +21,13 @@
 -(NSString *)description
 {
     NSMutableString *str = [NSMutableString string];
-    [str appendFormat:@"m:%d", mCheckboxSelected];
-    [str appendFormat:@"xib:%d", xibCheckbox];
-    [str appendFormat:@"c++:%d", cppCheckbox];
-    [str appendFormat:@"html:%d", htmlCheckbox];
-    [str appendFormat:@"mm:%d", mmCheckbox];
-    [str appendFormat:@"plist:%d", plistCheckbox];
-    [str appendFormat:@"css:%d", cssCheckbox];
+    [str appendFormat:@"m:%d ", mCheckboxSelected];
+    [str appendFormat:@"xib:%d ", xibCheckbox];
+    [str appendFormat:@"c++:%d ", cppCheckbox];
+    [str appendFormat:@"html:%d ", htmlCheckbox];
+    [str appendFormat:@"mm:%d ", mmCheckbox];
+    [str appendFormat:@"plist:%d ", plistCheckbox];
+    [str appendFormat:@"css:%d ", cssCheckbox];
     
     return str;
 }

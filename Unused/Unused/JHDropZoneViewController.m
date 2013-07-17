@@ -54,10 +54,9 @@
     // Notify delegate
     if(self.delegate && [self.delegate respondsToSelector:@selector(viewController:didChooseSetting:)]) {
         // Pass setting to delegate
-        JHSearchFolderSetting *setting = [[JHSearchFolderSetting alloc] init];
+        JHSearchFolderSetting *setting = [JHSearchFolderSetting setting];
         setting.searchDirectoryPath = folderPath;
         [self.delegate viewController:self didChooseSetting:setting];
-        [setting release];
     }
 }
 

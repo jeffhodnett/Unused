@@ -11,6 +11,6 @@
 
 @interface JHSearchFolderSetting : JHScanSetting
 
-@property(nonatomic, assign) NSString *searchDirectoryPath;
+@property(nonatomic, retain) NSString *searchDirectoryPath;
 
 @end
