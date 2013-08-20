@@ -8,7 +8,7 @@
 
 #import "UnusedAppDelegate.h"
 
-#define SHOULD_FILTER_ENUM_VARIANTS YES
+#define SHOULD_FILTER_ENUM_VARIANTS NO
 
 @implementation UnusedAppDelegate
 
@@ -19,6 +19,7 @@
 @synthesize mCheckbox=_mCheckbox;
 @synthesize xibCheckbox=_xibCheckbox;
 @synthesize cppCheckbox=_cppCheckbox;
+@synthesize headerCheckbox=_headerCheckbox;
 @synthesize mmCheckbox=_mmCheckbox;
 @synthesize htmlCheckbox =_htmlCheckbox;
 @synthesize plistCheckbox =_plistCheckbox;
@@ -197,10 +198,8 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
     dispatch_group_t group = dispatch_group_create();
         
     // Now loop and check
-    [pngFiles enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
-    {
-        dispatch_group_async(group, queue, ^
-        {
+    [pngFiles enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        dispatch_group_async(group, queue, ^{
             NSString *pngPath = (NSString *)obj;
              
             // Check that the png path is not empty
@@ -220,13 +219,15 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
                                               [NSDictionary dictionaryWithObjectsAndKeys:_htmlCheckbox, kSettingControlKey, @"html", kSettingExtensionKey, nil],
                                               [NSDictionary dictionaryWithObjectsAndKeys:_cssCheckbox, kSettingControlKey, @"css", kSettingExtensionKey, nil],
                                               [NSDictionary dictionaryWithObjectsAndKeys:_plistCheckbox, kSettingControlKey, @"plist", kSettingExtensionKey, nil],
+                                              [NSDictionary dictionaryWithObjectsAndKeys:_headerCheckbox,
+                                                  kSettingControlKey, @"h", kSettingExtensionKey, nil],
 
                                        nil];
                     BOOL isSearchCancelled = NO;
                     for (NSDictionary *settingDic in settingsItems) {
                         // Get the items
                         id checkbox = [settingDic objectForKey:kSettingControlKey];
-                        NSString *extension = [settingDic objectForKey:kSettingControlKey];
+                        NSString *extension = [settingDic objectForKey:kSettingExtensionKey];
                         
                         // Run the check
                         if(!isSearchCancelled && [checkbox state] &&
@@ -238,10 +239,9 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
                     // Is it not found
                     // Update results
                     if (!isSearchCancelled)
-                        dispatch_async(dispatch_get_main_queue(), ^
-                    {
-                        [self addNewResult:pngPath];
-                    });
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [self addNewResult:pngPath];
+                        });
                  }
              }
          });
@@ -292,6 +292,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
     [_xibCheckbox setEnabled:state];
     [_cppCheckbox setEnabled:state];
     [_mmCheckbox setEnabled:state];
+    [_headerCheckbox setEnabled:state];
     [_htmlCheckbox setEnabled:state];
     [_plistCheckbox setEnabled:state];
     [_cssCheckbox setEnabled:state];
@@ -366,6 +367,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
 
 -(int)occurancesOfImageNamed:(NSString *)imageName atDirectory:(NSString *)directoryPath inFileExtensionType:(NSString *)extension
 {
+   // NSLog(@"%@", imageName);
     NSData *data;
 	[_fileDataLock lock];
 	data = [_fileData objectForKey:directoryPath];
@@ -377,7 +379,8 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
 		[task setLaunchPath: @"/bin/sh"];
 		
 		// Setup the call
-		NSString *cmd = [NSString stringWithFormat:@"export IFS=""; while read file; do cat $file | grep -o %@ ; done <<< $(find %@ -name *.%@)", [imageName stringByDeletingPathExtension], directoryPath, extension];
+		NSString *cmd = [NSString stringWithFormat:@"for filename in `find %@ -name '*.%@'`; do cat $filename 2>/dev/null | grep -o %@ ; done", directoryPath, extension,[imageName stringByDeletingPathExtension]];
+        NSLog(@"%@", cmd);
 		NSArray *argvals = [NSArray arrayWithObjects: @"-c", cmd, nil];
 		[task setArguments: argvals];
 		
@@ -392,8 +395,9 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
 		
 		// Read the response
 		data = [file readDataToEndOfFile];
+        NSString *key = [NSString stringWithFormat:@"%@/%@",directoryPath, imageName];
 		
-		[_fileData setObject:data forKey:directoryPath];
+		[_fileData setObject:data forKey:key];
 	}
 	[_fileDataLock unlock];
 
