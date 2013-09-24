@@ -327,6 +327,7 @@
         if(fontSize <= 1.0f) {
             textFits = YES;
         }
+        [currentText release];
     }
 }
 
