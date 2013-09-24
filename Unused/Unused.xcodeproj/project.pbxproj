@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F1020B017F14A600001E84F /* JHButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1020AF17F14A600001E84F /* JHButton.m */; };
 		1F32B81F17439F830093C380 /* ITSidebar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F32B81C17439F830093C380 /* ITSidebar.m */; };
 		1F32B82017439F830093C380 /* ITSidebarItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F32B81E17439F830093C380 /* ITSidebarItemCell.m */; };
 		1F32B8391743A0800093C380 /* push-pushed.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F32B8251743A0800093C380 /* push-pushed.png */; };
@@ -61,6 +62,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1F1020AE17F14A600001E84F /* JHButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JHButton.h; sourceTree = "<group>"; };
+		1F1020AF17F14A600001E84F /* JHButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHButton.m; sourceTree = "<group>"; };
 		1F32B81B17439F830093C380 /* ITSidebar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ITSidebar.h; sourceTree = "<group>"; };
 		1F32B81C17439F830093C380 /* ITSidebar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ITSidebar.m; sourceTree = "<group>"; };
 		1F32B81D17439F830093C380 /* ITSidebarItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ITSidebarItemCell.h; sourceTree = "<group>"; };
@@ -150,6 +153,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1F1020AD17F14A4C0001E84F /* JHButton */ = {
+			isa = PBXGroup;
+			children = (
+				1F1020AE17F14A600001E84F /* JHButton.h */,
+				1F1020AF17F14A600001E84F /* JHButton.m */,
+			);
+			name = JHButton;
+			sourceTree = "<group>";
+		};
 		1F32B8231743A00B0093C380 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -322,6 +334,7 @@
 		1FABB8D31744FA590027315D /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				1F1020AD17F14A4C0001E84F /* JHButton */,
 				1FABB8D41744FA690027315D /* RMSkinnedView.h */,
 				1FABB8D51744FA690027315D /* RMSkinnedView.m */,
 				1F32B84D1743A2E10093C380 /* Sidebar */,
@@ -491,6 +504,7 @@
 				1F6BB1081746584400523659 /* JHSearchFolderSetting.m in Sources */,
 				1F6BB10E1746645800523659 /* JHScanFilesSetting.m in Sources */,
 				1F98ABE71759007A00A647A8 /* JHSpeechBubbleView.m in Sources */,
+				1F1020B017F14A600001E84F /* JHButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,8 +8,11 @@
 
 #import "JHUnusedScanManager.h"
 #import "JHSearchFolderSetting.h"
+#import "JHScanFilesSetting.h"
 
 #define SHOULD_FILTER_ENUM_VARIANTS YES
+
+#define kNumberOfViews 3
 
 // Constant strings
 NSString const *kSettingControlKey = @"kSettingControlKey";
@@ -44,6 +47,9 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
         
         // Setup the settings
         _settings = [[NSMutableArray alloc] init];
+        for (int i = 0; i < kNumberOfViews; i++) {
+            [_settings insertObject:[NSNull null] atIndex:i];
+        }
         
         // Setup the results array
         _results = [[NSMutableArray alloc] init];
@@ -86,13 +92,37 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
 
 - (NSString *)searchDirectoryPath
 {
-#warning DEBUG
-    return @"/Users/jeff/Desktop/PhotoScroller";
-    
+    // Get directory path from setting
     for (JHScanSetting *setting in _settings) {
         if([setting isKindOfClass:[JHSearchFolderSetting class]]) {
             JHSearchFolderSetting *folderSetting = (JHSearchFolderSetting *)setting;
             return [folderSetting searchDirectoryPath];
+        }
+    }
+    
+    return nil;
+}
+
+-(NSArray *)settingsItems
+{
+    // Find setting
+    for (JHScanSetting *setting in _settings) {
+        if([setting isKindOfClass:[JHScanFilesSetting class]]) {
+            // Get file settings
+            JHScanFilesSetting *fileSetting = (JHScanFilesSetting *)setting;
+            
+            // Return array
+            NSArray *settingsItems = [NSArray arrayWithObjects:
+                                      [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:fileSetting.mCheckboxSelected], kSettingControlKey, @"m", kSettingExtensionKey, nil],
+                                      [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:fileSetting.xibCheckbox], kSettingControlKey, @"xib", kSettingExtensionKey, nil],
+                                      [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:fileSetting.cppCheckbox], kSettingControlKey, @"cpp", kSettingExtensionKey, nil],
+                                      [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:fileSetting.mmCheckbox], kSettingControlKey, @"mm", kSettingExtensionKey, nil],
+                                      [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:fileSetting.htmlCheckbox], kSettingControlKey, @"html", kSettingExtensionKey, nil],
+                                      [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:fileSetting.cssCheckbox], kSettingControlKey, @"css", kSettingExtensionKey, nil],
+                                      [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:fileSetting.plistCheckbox], kSettingControlKey, @"plist", kSettingExtensionKey, nil],
+                                      nil];
+            
+            return settingsItems;
         }
     }
     
@@ -109,28 +139,18 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
 - (void)startScan
 {
     // Check settings
-    NSLog(@"_settings %@", _settings);    
+    NSString *searchDirectoryPath = [self searchDirectoryPath];
+    BOOL pathError = !(searchDirectoryPath && [[NSFileManager defaultManager] fileExistsAtPath:searchDirectoryPath]);
     
-    // Check for a path
-//    if(!self.searchDirectoryPath) {
-//        // Show an alert
-//        NSAlert *alert = [[[NSAlert alloc] init] autorelease];
-//        [alert setMessageText:NSLocalizedString(@"ProjectPathErrorTitle", @"")];
-//        [alert setInformativeText:NSLocalizedString(@"PleaseSelectValidPathErrorMessage", @"")];
-//        [alert runModal];
-//        
-//        return;
-//    }
-    
-    // Check the path
-//    if(![[NSFileManager defaultManager] fileExistsAtPath:self.searchDirectoryPath]) {
-//        NSAlert *alert = [[[NSAlert alloc] init] autorelease];
-//        [alert setMessageText:NSLocalizedString(@"ProjectPathErrorTitle", @"")];
-//        [alert setInformativeText:NSLocalizedString(@"InvalidFolderPathErrorMessage", @"")];
-//        [alert runModal];
-//        
-//        return;
-//    }
+    // Check for path error
+    if(pathError) {
+        NSAlert *alert = [[[NSAlert alloc] init] autorelease];
+        [alert setMessageText:NSLocalizedString(@"ProjectPathErrorTitle", @"")];
+        [alert setInformativeText:NSLocalizedString(@"InvalidFolderPathErrorMessage", @"")];
+        [alert runModal];
+        
+        return;
+    }
     
     // Reset
     [_results removeAllObjects];
@@ -199,25 +219,15 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
                                       if([self isValidImageAtPath:pngPath]) {
                                           
                                           // Settings items
-//                                          NSArray *settingsItems = [NSArray arrayWithObjects:
-//                                                                    [NSDictionary dictionaryWithObjectsAndKeys:_mCheckbox, kSettingControlKey, @"m", kSettingExtensionKey, nil],
-//                                                                    [NSDictionary dictionaryWithObjectsAndKeys:_xibCheckbox, kSettingControlKey, @"xib", kSettingExtensionKey, nil],
-//                                                                    [NSDictionary dictionaryWithObjectsAndKeys:_cppCheckbox, kSettingControlKey, @"cpp", kSettingExtensionKey, nil],
-//                                                                    [NSDictionary dictionaryWithObjectsAndKeys:_mmCheckbox, kSettingControlKey, @"mm", kSettingExtensionKey, nil],
-//                                                                    [NSDictionary dictionaryWithObjectsAndKeys:_htmlCheckbox, kSettingControlKey, @"html", kSettingExtensionKey, nil],
-//                                                                    [NSDictionary dictionaryWithObjectsAndKeys:_cssCheckbox, kSettingControlKey, @"css", kSettingExtensionKey, nil],
-//                                                                    [NSDictionary dictionaryWithObjectsAndKeys:_plistCheckbox, kSettingControlKey, @"plist", kSettingExtensionKey, nil],
-//                                                                    
-//                                                                    nil];
-                                          NSArray *settingsItems = [NSArray array];
+                                          NSArray *settingsItems = [self settingsItems];
                                           BOOL isSearchCancelled = NO;
                                           for (NSDictionary *settingDic in settingsItems) {
                                               // Get the items
-                                              id checkbox = [settingDic objectForKey:kSettingControlKey];
+                                              BOOL checkboxState = [[settingDic objectForKey:kSettingControlKey] boolValue];
                                               NSString *extension = [settingDic objectForKey:kSettingControlKey];
                                               
                                               // Run the check
-                                              if(!isSearchCancelled && [checkbox state] &&
+                                              if(!isSearchCancelled && checkboxState &&
                                                  [self occurancesOfImageNamed:imageName atDirectory:[self searchDirectoryPath] inFileExtensionType:extension]) {
                                                   isSearchCancelled = YES;
                                               }
