@@ -10,12 +10,12 @@
 
 @interface UnusedAppDelegate : NSObject <NSApplicationDelegate, NSTableViewDataSource, NSTableViewDelegate> {
 @private
-
+    
     // Arrays
     NSArray *_pngFiles;
     NSMutableArray *_results;
     NSMutableArray *_retinaImagePaths;
-
+    
     NSOperationQueue *_queue;
     BOOL isSearching;
 	
@@ -32,6 +32,7 @@
 @property(assign) IBOutlet NSButton *exportButton;
 @property (assign) IBOutlet NSButton *mCheckbox;
 @property (assign) IBOutlet NSButton *xibCheckbox;
+@property (assign) IBOutlet NSButton *sbCheckbox;
 @property (assign) IBOutlet NSButton *cppCheckbox;
 @property (assign) IBOutlet NSButton *headerCheckbox;
 @property (assign) IBOutlet NSButton *htmlCheckbox;
