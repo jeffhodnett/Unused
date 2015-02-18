@@ -109,11 +109,10 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
 }
 
 - (IBAction)startSearch:(id)sender {
-    // Update the path text field
-    [self.pathTextField setStringValue:self.searchDirectoryPath];
-    
-    // Check for a path
-    if (!self.searchDirectoryPath) {
+    // Check if user has selected or entered a path
+	NSString *projectPath = [self.pathTextField stringValue];
+	BOOL isPathEmpty = [projectPath isEqualToString:@""];
+    if (isPathEmpty) {
         // Show an alert
         NSAlert *alert = [[[NSAlert alloc] init] autorelease];
         [alert setMessageText:NSLocalizedString(@"ProjectPathErrorTitle", @"")];
@@ -123,8 +122,9 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
         return;
     }
     
-    // Check the path
-    if (![[NSFileManager defaultManager] fileExistsAtPath:self.searchDirectoryPath]) {
+    // Check the path exists
+	BOOL pathExists = [[NSFileManager defaultManager] fileExistsAtPath:projectPath];
+    if (!pathExists) {
         NSAlert *alert = [[[NSAlert alloc] init] autorelease];
         [alert setMessageText:NSLocalizedString(@"ProjectPathErrorTitle", @"")];
         [alert setInformativeText:NSLocalizedString(@"InvalidFolderPathErrorMessage", @"")];
@@ -133,6 +133,11 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
         return;
     }
     
+	// user has entered a path instead of browsing for one
+	if (!self.searchDirectoryPath && ![self.searchDirectoryPath isEqualToString:@""]) {
+		self.searchDirectoryPath = projectPath;
+	}
+
     // Change the button text
     [_searchButton setEnabled:NO];
     [_searchButton setKeyEquivalent:@""];
