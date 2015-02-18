@@ -115,24 +115,24 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
     if (isPathEmpty) {
         // Show an alert
         NSAlert *alert = [[[NSAlert alloc] init] autorelease];
-        [alert setMessageText:NSLocalizedString(@"ProjectPathErrorTitle", @"")];
-        [alert setInformativeText:NSLocalizedString(@"PleaseSelectValidPathErrorMessage", @"")];
+        [alert setMessageText:NSLocalizedString(@"MissingPathErrorTitle", @"")];
+        [alert setInformativeText:NSLocalizedString(@"ProjectFolderPathErrorMessage", @"")];
         [alert runModal];
-        
+
         return;
     }
-    
+
     // Check the path exists
 	BOOL pathExists = [[NSFileManager defaultManager] fileExistsAtPath:projectPath];
     if (!pathExists) {
-        NSAlert *alert = [[[NSAlert alloc] init] autorelease];
-        [alert setMessageText:NSLocalizedString(@"ProjectPathErrorTitle", @"")];
-        [alert setInformativeText:NSLocalizedString(@"InvalidFolderPathErrorMessage", @"")];
+		NSAlert *alert = [[[NSAlert alloc] init] autorelease];
+        [alert setMessageText:NSLocalizedString(@"InvalidPathErrorTitle", @"")];
+        [alert setInformativeText:NSLocalizedString(@"ProjectFolderPathErrorMessage", @"")];
         [alert runModal];
-        
+
         return;
     }
-    
+
 	// user has entered a path instead of browsing for one
 	if (!self.searchDirectoryPath && ![self.searchDirectoryPath isEqualToString:@""]) {
 		self.searchDirectoryPath = projectPath;
