@@ -8,28 +8,27 @@
 
 #import "UnusedAppDelegate.h"
 
-#define SHOULD_FILTER_ENUM_VARIANTS NO
-
 @implementation UnusedAppDelegate
 
-@synthesize resultsTableView=_resultsTableView;
-@synthesize processIndicator=_processIndicator;
-@synthesize statusLabel=_statusLabel;
-@synthesize window=_window;
-@synthesize mCheckbox=_mCheckbox;
-@synthesize xibCheckbox=_xibCheckbox;
-@synthesize sbCheckbox=_sbCheckbox;
-@synthesize cppCheckbox=_cppCheckbox;
-@synthesize headerCheckbox=_headerCheckbox;
-@synthesize mmCheckbox=_mmCheckbox;
-@synthesize htmlCheckbox =_htmlCheckbox;
-@synthesize plistCheckbox =_plistCheckbox;
-@synthesize cssCheckbox =_cssCheckbox;
-@synthesize browseButton=_browseButton;
-@synthesize pathTextField=_pathTextField;
-@synthesize searchButton=_searchButton;
-@synthesize exportButton=_exportButton;
-@synthesize searchDirectoryPath=_searchDirectoryPath;
+@synthesize resultsTableView = _resultsTableView;
+@synthesize processIndicator = _processIndicator;
+@synthesize statusLabel = _statusLabel;
+@synthesize window = _window;
+@synthesize mCheckbox = _mCheckbox;
+@synthesize xibCheckbox = _xibCheckbox;
+@synthesize sbCheckbox = _sbCheckbox;
+@synthesize cppCheckbox = _cppCheckbox;
+@synthesize headerCheckbox = _headerCheckbox;
+@synthesize mmCheckbox = _mmCheckbox;
+@synthesize htmlCheckbox = _htmlCheckbox;
+@synthesize plistCheckbox = _plistCheckbox;
+@synthesize cssCheckbox = _cssCheckbox;
+@synthesize enumCheckbox = _enumCheckbox;
+@synthesize browseButton = _browseButton;
+@synthesize pathTextField = _pathTextField;
+@synthesize searchButton = _searchButton;
+@synthesize exportButton = _exportButton;
+@synthesize searchDirectoryPath = _searchDirectoryPath;
 
 // Constant strings
 NSString const *kSettingControlKey = @"kSettingControlKey";
@@ -56,7 +55,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
     // Setup search button
     [_searchButton setBezelStyle:NSRoundedBezelStyle];
     [_searchButton setKeyEquivalent:@"\r"];
-	
+
 	_fileData = [NSMutableDictionary new];
 	_fileDataLock = [NSLock new];
 }
@@ -120,7 +119,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
     [self.pathTextField setStringValue:self.searchDirectoryPath];
     
     // Check for a path
-    if(!self.searchDirectoryPath) {
+    if (!self.searchDirectoryPath) {
         // Show an alert
         NSAlert *alert = [[[NSAlert alloc] init] autorelease];
         [alert setMessageText:NSLocalizedString(@"ProjectPathErrorTitle", @"")];
@@ -131,7 +130,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
     }
     
     // Check the path
-    if(![[NSFileManager defaultManager] fileExistsAtPath:self.searchDirectoryPath]) {
+    if (![[NSFileManager defaultManager] fileExistsAtPath:self.searchDirectoryPath]) {
         NSAlert *alert = [[[NSAlert alloc] init] autorelease];
         [alert setMessageText:NSLocalizedString(@"ProjectPathErrorTitle", @"")];
         [alert setInformativeText:NSLocalizedString(@"InvalidFolderPathErrorMessage", @"")];
@@ -167,9 +166,9 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
     _pngFiles = [[self pngFilesAtDirectory:_searchDirectoryPath] retain];
     
     NSArray *pngFiles = _pngFiles;
-    
-    if (SHOULD_FILTER_ENUM_VARIANTS)
-    {
+
+	BOOL filterEnumVariables = [_enumCheckbox state];
+    if (filterEnumVariables) {
         NSMutableArray *mutablePngFiles = [NSMutableArray arrayWithArray:pngFiles];
         
         // Trying to filter image names like: "Section_0.png", "Section_1.png", etc (these names can possibly be created by [NSString stringWithFormat:@"Section_%d", (int)] constructions) to just "Section_" item
@@ -180,7 +179,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
             NSString *newImageName = [regExp stringByReplacingMatchesInString:imageName options:NSMatchingReportProgress range:NSMakeRange(0, [imageName length]) withTemplate:@""];
             if (newImageName != nil)
                 [mutablePngFiles replaceObjectAtIndex:index withObject:newImageName];
-        }
+			}
         
         // Remove duplicates and update pngFiles array
         pngFiles = [[NSSet setWithArray:mutablePngFiles] allObjects];
@@ -192,7 +191,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
         
         // Does the image have a @2x
         NSRange retinaRange = [imageName rangeOfString:@"@2x"];
-        if(retinaRange.location != NSNotFound) {
+        if (retinaRange.location != NSNotFound) {
             // Add to retina image paths
             [_retinaImagePaths addObject:pngPath];
         }
@@ -235,7 +234,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
                         NSString *extension = [settingDic objectForKey:kSettingExtensionKey];
                         
                         // Run the check
-                        if(!isSearchCancelled && [checkbox state] &&
+                        if (!isSearchCancelled && [checkbox state] &&
                            [self occurancesOfImageNamed:imageName atDirectory:_searchDirectoryPath inFileExtensionType:extension]) {
                             isSearchCancelled = YES;
                         }
@@ -251,7 +250,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
             }
         });
     }];
-    
+
     dispatch_group_notify(group, queue, ^
                           {
                               dispatch_async(dispatch_get_main_queue(), ^
@@ -280,7 +279,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
 -(void)setUIEnabled:(BOOL)state
 {
     // Individual
-    if(state) {
+    if (state) {
         [_searchButton setTitle:NSLocalizedString(@"Search", @"")];
         [_searchButton setKeyEquivalent:@"\r"];
         [_processIndicator stopAnimation:self];
@@ -357,12 +356,12 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
     if([imageName isEqualToString:@"Default.png"]) {
         return NO;
     }
-    
+
     // Is the name Icon
     if([imageName isEqualToString:@"Icon.png"] || [imageName isEqualToString:@"Icon@2x.png"] || [imageName isEqualToString:@"Icon-72.png"]) {
         return NO;
-    }
-    
+}
+
     // Is it a universal image
     if([imagePath rangeOfString:@"~ipad" options:NSCaseInsensitiveSearch].length > 0) {
         return NO;
@@ -385,7 +384,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
 		[task setLaunchPath: @"/bin/sh"];
 		
 		// Setup the call
-		NSString *cmd = [NSString stringWithFormat:@"for filename in `find %@ -name '*.%@'`; do cat $filename 2>/dev/null | grep -o %@ ; done", directoryPath, extension,[imageName stringByDeletingPathExtension]];
+		NSString *cmd = [NSString stringWithFormat:@"for filename in `find %@ -name '*.%@'`; do cat $filename 2>/dev/null | grep -o %@ ; done", directoryPath, extension, [imageName stringByDeletingPathExtension]];
         NSLog(@"%@", cmd);
 		NSArray *argvals = [NSArray arrayWithObjects: @"-c", cmd, nil];
 		[task setArguments: argvals];
@@ -411,10 +410,10 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
     string = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
     
     // Calculate the count
-    NSScanner *scanner = [NSScanner scannerWithString: string];
+    NSScanner *scanner = [NSScanner scannerWithString:string];
     NSCharacterSet *newline = [NSCharacterSet newlineCharacterSet];
     int count = 0;
-    while ([scanner scanUpToCharactersFromSet: newline  intoString: nil]) {
+    while ([scanner scanUpToCharactersFromSet:newline intoString:nil]) {
         count++;
     }
     
@@ -425,7 +424,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
 {
     if ([_pngFiles indexOfObject:pngPath] == NSNotFound)
         return;
-    
+
     // Add and reload
     [_results addObject:pngPath];
     
@@ -455,7 +454,7 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
     NSInteger numberOfRows = [_resultsTableView numberOfRows];
     if (numberOfRows > 0)
         [_resultsTableView scrollRowToVisible:numberOfRows - 1];
-}
+	}
 
 #pragma mark - NSTableView Delegate
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
@@ -498,10 +497,10 @@ NSString const *kSettingExtensionKey = @"kSettingExtensionKey";
 		return([NSString stringWithFormat:@"%i bytes",theSize]);
 	floatSize = floatSize / 1024;
 	if (floatSize<1023)
-		return([NSString stringWithFormat:@"%1.1f KB",floatSize]);
+		return([NSString stringWithFormat:@"%1.1f KB", floatSize]);
 	floatSize = floatSize / 1024;
 	if (floatSize<1023)
-		return([NSString stringWithFormat:@"%1.1f MB",floatSize]);
+		return([NSString stringWithFormat:@"%1.1f MB", floatSize]);
 	floatSize = floatSize / 1024;
     
 	// Add as many as you like
