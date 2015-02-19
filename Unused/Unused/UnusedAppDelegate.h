@@ -29,7 +29,7 @@
 @property (assign) IBOutlet NSTableView *resultsTableView;
 @property (assign) IBOutlet NSProgressIndicator *processIndicator;
 @property (assign) IBOutlet NSTextField *statusLabel;
-@property(assign) IBOutlet NSButton *exportButton;
+@property (assign) IBOutlet NSButton *exportButton;
 @property (assign) IBOutlet NSButton *mCheckbox;
 @property (assign) IBOutlet NSButton *xibCheckbox;
 @property (assign) IBOutlet NSButton *sbCheckbox;
@@ -38,10 +38,11 @@
 @property (assign) IBOutlet NSButton *htmlCheckbox;
 @property (assign) IBOutlet NSButton *mmCheckbox;
 @property (assign) IBOutlet NSButton *plistCheckbox;
+@property (assign) IBOutlet NSButton *enumCheckbox;
 @property (assign) IBOutlet NSButton *cssCheckbox;
-@property(assign) IBOutlet NSButton *browseButton;
-@property(assign) IBOutlet NSTextField *pathTextField;
-@property(assign) IBOutlet NSButton *searchButton;
+@property (assign) IBOutlet NSButton *browseButton;
+@property (assign) IBOutlet NSTextField *pathTextField;
+@property (assign) IBOutlet NSButton *searchButton;
 
 // The search directory path
 @property(nonatomic, retain) NSString *searchDirectoryPath;
