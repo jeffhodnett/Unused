@@ -2,12 +2,3 @@
 /* Search */
 "Search" = "Fouille";
 "Searching" = "Fouille...";
-"CompletedResultMessage" = "Completed - Found %ld - Size %@";
-
-/* Export */
-"ExportSummaryTitle" = "Unused Files in project %@\n\n";
-
-/* Errors */
-"ProjectPathErrorTitle" = "Project Path Error";
-"PleaseSelectValidPathErrorMessage" = "Please select a valid project folder!";
-"InvalidFolderPathErrorMessage" = "Path is not valid!! Please select a valid project folder!";

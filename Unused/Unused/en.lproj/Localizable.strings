@@ -6,6 +6,10 @@
 
 /* Export */
 "ExportSummaryTitle" = "Unused Files in project %@\n\n";
+"ExportCompleteTitle" = "Export Complete";
+"ExportCompleteSubtitle" = "The results have been exported successfully";
+"ExportErrorTitle" = "Export Error";
+"ExportErrorSubtitle" = "There was an error exporting the results";
 
 /* Errors */
 "MissingPathErrorTitle" = "No Project Folder Selected";

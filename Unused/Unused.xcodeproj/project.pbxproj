@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F168D681AAF1CCD0082E1BC /* CONTRIBUTORS in Resources */ = {isa = PBXBuildFile; fileRef = 1F168D671AAF1CCD0082E1BC /* CONTRIBUTORS */; };
 		1F55B4A81478097A008A4B0E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F55B4A71478097A008A4B0E /* Cocoa.framework */; };
 		1F55B4B21478097A008A4B0E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1F55B4B01478097A008A4B0E /* InfoPlist.strings */; };
 		1F55B4B51478097A008A4B0E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F55B4B41478097A008A4B0E /* main.m */; };
@@ -15,9 +16,13 @@
 		1F55B4BE1478097A008A4B0E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F55B4BC1478097A008A4B0E /* MainMenu.xib */; };
 		1F6EFD7A147E597400F8950E /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1F6EFD79147E597400F8950E /* Icon.icns */; };
 		1F93632A16D4AC5E00EF0774 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1F93632C16D4AC5E00EF0774 /* Localizable.strings */; };
+		1FBF7B301AA8BBAB00EC2E31 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FBF7B2F1AA8BBAB00EC2E31 /* Images.xcassets */; };
+		1FBF7B331AA8BD2800EC2E31 /* FileUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FBF7B321AA8BD2800EC2E31 /* FileUtil.m */; };
+		1FBF7B361AAC807500EC2E31 /* Searcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FBF7B351AAC807500EC2E31 /* Searcher.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1F168D671AAF1CCD0082E1BC /* CONTRIBUTORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CONTRIBUTORS; sourceTree = "<group>"; };
 		1F55B4A31478097A008A4B0E /* Unused.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Unused.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F55B4A71478097A008A4B0E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		1F55B4AA1478097A008A4B0E /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -34,6 +39,11 @@
 		1F6EFD79147E597400F8950E /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
 		1F93632B16D4AC5E00EF0774 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1F93632D16D4AC7200EF0774 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1FBF7B2F1AA8BBAB00EC2E31 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		1FBF7B311AA8BD2800EC2E31 /* FileUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileUtil.h; sourceTree = "<group>"; };
+		1FBF7B321AA8BD2800EC2E31 /* FileUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileUtil.m; sourceTree = "<group>"; };
+		1FBF7B341AAC807500EC2E31 /* Searcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Searcher.h; sourceTree = "<group>"; };
+		1FBF7B351AAC807500EC2E31 /* Searcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Searcher.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,7 +99,12 @@
 			children = (
 				1F55B4B91478097A008A4B0E /* UnusedAppDelegate.h */,
 				1F55B4BA1478097A008A4B0E /* UnusedAppDelegate.m */,
+				1FBF7B311AA8BD2800EC2E31 /* FileUtil.h */,
+				1FBF7B321AA8BD2800EC2E31 /* FileUtil.m */,
+				1FBF7B341AAC807500EC2E31 /* Searcher.h */,
+				1FBF7B351AAC807500EC2E31 /* Searcher.m */,
 				1F55B4BC1478097A008A4B0E /* MainMenu.xib */,
+				1FBF7B2F1AA8BBAB00EC2E31 /* Images.xcassets */,
 				1F55B4AE1478097A008A4B0E /* Supporting Files */,
 			);
 			path = Unused;
@@ -105,6 +120,7 @@
 				1F55B4B31478097A008A4B0E /* Unused-Prefix.pch */,
 				1F55B4B41478097A008A4B0E /* main.m */,
 				1F55B4B61478097A008A4B0E /* Credits.rtf */,
+				1F168D671AAF1CCD0082E1BC /* CONTRIBUTORS */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -135,7 +151,7 @@
 		1F55B49A1478097A008A4B0E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0610;
 			};
 			buildConfigurationList = 1F55B49D1478097A008A4B0E /* Build configuration list for PBXProject "Unused" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -160,9 +176,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F168D681AAF1CCD0082E1BC /* CONTRIBUTORS in Resources */,
 				1F55B4B21478097A008A4B0E /* InfoPlist.strings in Resources */,
 				1F55B4B81478097A008A4B0E /* Credits.rtf in Resources */,
 				1F55B4BE1478097A008A4B0E /* MainMenu.xib in Resources */,
+				1FBF7B301AA8BBAB00EC2E31 /* Images.xcassets in Resources */,
 				1F6EFD7A147E597400F8950E /* Icon.icns in Resources */,
 				1F93632A16D4AC5E00EF0774 /* Localizable.strings in Resources */,
 			);
@@ -175,7 +193,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1FBF7B331AA8BD2800EC2E31 /* FileUtil.m in Sources */,
 				1F55B4B51478097A008A4B0E /* main.m in Sources */,
+				1FBF7B361AAC807500EC2E31 /* Searcher.m in Sources */,
 				1F55B4BB1478097A008A4B0E /* UnusedAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -222,11 +242,14 @@
 		1F55B4BF1478097A008A4B0E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
@@ -234,7 +257,9 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
@@ -245,16 +270,21 @@
 		1F55B4C01478097A008A4B0E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				SDKROOT = macosx;
@@ -265,6 +295,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -282,6 +314,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: Seamonster Ltd.";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
@@ -298,16 +332,21 @@
 		1F9DF8EF1487E47A00A1EAC8 /* Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				SDKROOT = macosx;
@@ -318,6 +357,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: Seamonster Ltd.";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
